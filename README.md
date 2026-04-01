@@ -8,8 +8,6 @@ A full-stack e-commerce platform featuring an AI-powered shopping assistant buil
 - [Tech Stack](#-tech-stack)
 - [Prerequisites](#-prerequisites)
 - [Getting Started](#-getting-started)
-  - [Option 1: Docker (Recommended)](#option-1-docker-recommended)
-  - [Option 2: Local Development](#option-2-local-development)
 - [Environment Variables](#-environment-variables)
 - [Project Structure](#-project-structure)
 - [API Endpoints](#-api-endpoints)
@@ -37,10 +35,9 @@ A full-stack e-commerce platform featuring an AI-powered shopping assistant buil
 |-------|------------|
 | **Frontend** | Next.js 15, React 19, Tailwind CSS 4 |
 | **Backend** | Node.js, Express.js, TypeScript |
-| **Database** | PostgreSQL 16 with pgvector |
+| **Database** | PostgreSQL 16 |
 | **ORM** | Prisma |
 | **AI** | Groq API (Llama 3.1-8b-instant) |
-| **Containerization** | Docker & Docker Compose |
 
 ---
 
@@ -49,58 +46,14 @@ A full-stack e-commerce platform featuring an AI-powered shopping assistant buil
 Before you begin, ensure you have:
 
 - **Node.js** v18+ ([Download](https://nodejs.org/))
-- **Docker & Docker Compose** ([Download](https://www.docker.com/products/docker-desktop/))
+- **PostgreSQL** 16+ ([Download](https://www.postgresql.org/download/))
 - **Groq API Key** ([Get free key](https://console.groq.com/keys))
 
 ---
 
 ## 🚀 Getting Started
 
-### Option 1: Docker (Recommended)
-
-The easiest way to run the entire stack:
-
-```bash
-# 1. Clone the repository
-git clone <repository-url>
-cd Souqona
-
-# 2. Create environment file
-cp .env.example .env
-
-# 3. Edit .env and add your GROQ_API_KEY
-# Open .env in any text editor and set:
-# GROQ_API_KEY=your_actual_api_key_here
-
-# 4. Start all services
-npm run docker:up
-
-# 5. Run database migrations (first time only)
-docker exec -it souqona-api-1 npx prisma migrate deploy
-
-# 6. Seed the database with sample data (optional)
-docker exec -it souqona-api-1 npm run db:seed
-```
-
-**Access the app:**
-- 🌐 Frontend: http://localhost:3000
-- 🔌 API: http://localhost:3001
-- 🗄️ Database: localhost:5432
-
-**Docker Commands:**
-```bash
-npm run docker:up      # Start all services
-npm run docker:down    # Stop all services
-npm run docker:logs    # View logs
-```
-
----
-
-### Option 2: Local Development
-
-For development with hot-reload:
-
-#### Step 1: Install Dependencies
+### Step 1: Install Dependencies
 
 ```bash
 # Install root dependencies
@@ -118,7 +71,17 @@ npm install
 cd ../..
 ```
 
-#### Step 2: Setup Environment
+### Step 2: Setup PostgreSQL Database
+
+Create a new PostgreSQL database:
+
+```sql
+CREATE DATABASE souqona_db;
+CREATE USER souqona WITH PASSWORD 'souqona_secret';
+GRANT ALL PRIVILEGES ON DATABASE souqona_db TO souqona;
+```
+
+### Step 3: Setup Environment
 
 ```bash
 # Copy environment template
@@ -127,21 +90,21 @@ cp .env.example .env
 
 Edit `.env` file:
 ```env
-# Database - change 'db' to 'localhost' for local development
+# Database
+POSTGRES_USER=souqona
+POSTGRES_PASSWORD=souqona_secret
+POSTGRES_DB=souqona_db
 DATABASE_URL=postgresql://souqona:souqona_secret@localhost:5432/souqona_db?schema=public
 
-# Add your Groq API key
+# Groq AI - Get your key from https://console.groq.com/keys
 GROQ_API_KEY=gsk_your_actual_key_here
+
+# Ports (optional)
+API_PORT=3001
+WEB_PORT=3000
 ```
 
-#### Step 3: Start Database
-
-```bash
-# Start only the database container
-docker compose up db -d
-```
-
-#### Step 4: Setup Database Schema
+### Step 4: Setup Database Schema
 
 ```bash
 # Run migrations
@@ -153,7 +116,7 @@ npm run db:seed
 cd ../..
 ```
 
-#### Step 5: Start Development Servers
+### Step 5: Start Development Servers
 
 ```bash
 # Start both frontend and backend with hot-reload
@@ -218,7 +181,6 @@ Souqona/
 │   └── web/                    # Frontend (Next.js)
 │       └── src/
 │
-├── docker-compose.yml          # Docker services
 ├── .env.example                # Environment template
 └── package.json                # Root scripts
 ```
@@ -350,12 +312,10 @@ Main tables:
 
 ### "Cannot connect to database"
 
+Make sure PostgreSQL is running and the credentials in `.env` are correct:
 ```bash
-# Make sure Docker is running, then:
-docker compose up db -d
-
-# Check if database is healthy:
-docker compose ps
+# Test connection
+psql -U souqona -d souqona_db -h localhost
 ```
 
 ### "GROQ_API_KEY not set"
@@ -368,8 +328,8 @@ docker compose ps
 
 ### "Port already in use"
 
-```bash
-# Change ports in .env:
+Change ports in `.env`:
+```env
 API_PORT=3002
 WEB_PORT=3001
 ```
@@ -379,15 +339,6 @@ WEB_PORT=3001
 ```bash
 cd apps/server
 npx prisma generate
-```
-
-### Docker issues
-
-```bash
-# Full reset:
-npm run docker:down
-docker volume rm souqona_postgres_data
-npm run docker:up
 ```
 
 ---
