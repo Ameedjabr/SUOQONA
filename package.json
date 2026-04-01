@@ -1,0 +1,24 @@
+{
+  "name": "souqona",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Souqona — Professional E-Commerce Platform",
+  "scripts": {
+    "dev": "concurrently -k \"npm run dev:web\" \"npm run dev:server\"",
+    "dev:web": "cd apps/web && npm run dev",
+    "dev:server": "cd apps/server && npm run dev",
+    "build:web": "cd apps/web && npm run build",
+    "build:server": "cd apps/server && npm run build",
+    "docker:up": "docker compose up --build -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "db:migrate": "cd apps/server && npx prisma migrate dev",
+    "db:studio": "cd apps/server && npx prisma studio"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  },
+  "dependencies": {
+    "groq-sdk": "^1.1.2"
+  }
+}

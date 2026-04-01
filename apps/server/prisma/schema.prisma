@@ -1,0 +1,325 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  CUSTOMER
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum CartStatus {
+  ACTIVE
+  CONVERTED
+  ABANDONED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  COD
+}
+
+enum PaymentStatus {
+  UNPAID
+  COLLECTED
+  FAILED
+}
+
+enum InventoryMovementType {
+  RECEIVE
+  ADJUSTMENT
+  RESERVE
+  RELEASE
+  SHIP
+  RETURN
+}
+
+model User {
+  id            String        @id @default(uuid()) @db.Uuid
+  email         String        @unique
+  passwordHash  String
+  fullName      String
+  role          UserRole      @default(CUSTOMER)
+  isActive      Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  addresses     UserAddress[]
+  carts         Cart[]
+  orders        Order[]
+  auditLogs     AuditLog[]    @relation("AuditActor")
+  inventoryMoves InventoryMovement[] @relation("InventoryActor")
+  passwordResetTokens PasswordResetToken[]
+}
+
+model UserAddress {
+  id            String   @id @default(uuid()) @db.Uuid
+  userId        String   @db.Uuid
+  label         String?
+  fullName      String
+  phonePrimary  String
+  phoneSecondary String?
+  country       String
+  city          String
+  area          String
+  addressLine1  String
+  addressLine2  String?
+  postalCode    String?
+  isDefault     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Category {
+  id        String    @id @default(uuid()) @db.Uuid
+  name      String
+  slug      String    @unique
+  parentId  String?   @db.Uuid
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  parent    Category? @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children  Category[] @relation("CategoryTree")
+
+  productLinks ProductCategory[]
+}
+
+model Product {
+  id                  String        @id @default(uuid()) @db.Uuid
+  title               String
+  slug                String        @unique
+  description         String?
+  brand               String?
+  priceCents          Int?
+  compareAtPriceCents Int?
+  currency            String        @default("ILS")
+  status              ProductStatus @default(DRAFT)
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  // RAG: Vector embedding for semantic search
+  // Uncomment after installing pgvector: CREATE EXTENSION vector;
+  // embedding           Unsupported("vector(768)")?
+
+  variants    ProductVariant[]
+  images      ProductImage[]
+  categories  ProductCategory[]
+}
+
+model ProductCategory {
+  productId  String   @db.Uuid
+  categoryId String   @db.Uuid
+
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([productId, categoryId])
+  @@index([categoryId])
+}
+
+model ProductVariant {
+  id                String   @id @default(uuid()) @db.Uuid
+  productId         String   @db.Uuid
+  sku               String   @unique
+  barcode           String?
+  priceCents        Int
+  compareAtPriceCents Int?
+  currency          String   @default("ILS")
+  optionValues      Json     @default("{}")
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  product           Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  images            ProductImage[]
+  inventoryItem     InventoryItem?
+  inventoryMoves    InventoryMovement[]
+  cartItems         CartItem[]
+  orderItems        OrderItem[]
+
+  @@index([productId])
+}
+
+model ProductImage {
+  id        String   @id @default(uuid()) @db.Uuid
+  productId String?  @db.Uuid
+  variantId String?  @db.Uuid
+  url       String
+  alt       String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variant   ProductVariant? @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([variantId])
+}
+
+model InventoryItem {
+  id          String   @id @default(uuid()) @db.Uuid
+  variantId   String   @unique @db.Uuid
+  onHand      Int      @default(0)
+  reserved    Int      @default(0)
+  safetyStock Int      @default(0)
+  updatedAt   DateTime @updatedAt
+
+  variant     ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+}
+
+model InventoryMovement {
+  id            String                @id @default(uuid()) @db.Uuid
+  variantId     String                @db.Uuid
+  type          InventoryMovementType
+  quantity      Int
+  referenceType String?
+  referenceId   String?
+  note          String?
+  createdBy     String?               @db.Uuid
+  createdAt     DateTime              @default(now())
+
+  variant       ProductVariant        @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  actor         User?                 @relation("InventoryActor", fields: [createdBy], references: [id], onDelete: SetNull)
+
+  @@index([variantId])
+  @@index([createdBy])
+}
+
+model Cart {
+  id        String     @id @default(uuid()) @db.Uuid
+  userId    String?    @db.Uuid
+  status    CartStatus @default(ACTIVE)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  user      User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  items     CartItem[]
+
+  @@index([userId])
+}
+
+model CartItem {
+  id        String   @id @default(uuid()) @db.Uuid
+  cartId    String   @db.Uuid
+  variantId String   @db.Uuid
+  quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, variantId])
+  @@index([variantId])
+}
+
+model Order {
+  id             String        @id @default(uuid()) @db.Uuid
+  orderNumber    String        @unique
+  userId         String?       @db.Uuid
+
+  status         OrderStatus   @default(PENDING)
+
+  paymentMethod  PaymentMethod @default(COD)
+  paymentStatus  PaymentStatus @default(UNPAID)
+  paidAt         DateTime?
+
+  customerName   String
+  customerEmail  String?
+  phonePrimary   String
+  phoneSecondary String?
+  country        String
+  city           String
+  area           String
+  addressLine1   String
+  addressLine2   String?
+  postalCode     String?
+  deliveryNotes  String?
+
+  currency       String        @default("ILS")
+  subtotalCents  Int
+  discountCents  Int           @default(0)
+  shippingCents  Int           @default(0)
+  taxCents       Int           @default(0)
+  totalCents     Int
+
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  user           User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  items          OrderItem[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model OrderItem {
+  id             String   @id @default(uuid()) @db.Uuid
+  orderId        String   @db.Uuid
+  variantId      String?  @db.Uuid
+
+  productTitle   String
+  variantSku     String
+  unitPriceCents Int
+  quantity       Int
+  lineTotalCents Int
+  createdAt      DateTime @default(now())
+
+  order          Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variant        ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+  @@index([variantId])
+}
+
+model AuditLog {
+  id          String   @id @default(uuid()) @db.Uuid
+  actorUserId String?  @db.Uuid
+  action      String
+  entityType  String
+  entityId    String
+  before      Json?
+  after       Json?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  actor       User?    @relation("AuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([actorUserId])
+  @@index([entityType, entityId])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  token     String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}

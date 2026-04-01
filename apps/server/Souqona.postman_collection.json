@@ -1,0 +1,1019 @@
+{
+  "info": {
+    "name": "Souqona E-Commerce API",
+    "description": "Complete API collection for Souqona e-commerce platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3001" },
+    { "key": "accessToken", "value": "" },
+    { "key": "adminToken", "value": "" },
+    { "key": "userId", "value": "" },
+    { "key": "targetUserId", "value": "" },
+    { "key": "addressId", "value": "" },
+    { "key": "categoryId", "value": "" },
+    { "key": "productId", "value": "" },
+    { "key": "variantId", "value": "" },
+    { "key": "cartItemId", "value": "" },
+    { "key": "orderId", "value": "" },
+    { "key": "imageId", "value": "" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/health",
+            "auth": { "type": "noauth" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register (Customer)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) {",
+                  "  pm.collectionVariables.set('accessToken', res.data.accessToken);",
+                  "  pm.collectionVariables.set('userId', res.data.user.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/register",
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer@test.com\",\n  \"password\": \"Test@1234\",\n  \"fullName\": \"Test Customer\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login (Customer)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) {",
+                  "  pm.collectionVariables.set('accessToken', res.data.accessToken);",
+                  "  pm.collectionVariables.set('userId', res.data.user.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/login",
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer@test.com\",\n  \"password\": \"Test@1234\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) {",
+                  "  pm.collectionVariables.set('adminToken', res.data.accessToken);",
+                  "  pm.collectionVariables.set('accessToken', res.data.accessToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/login",
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@souqona.com\",\n  \"password\": \"Admin@123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/refresh",
+            "auth": { "type": "noauth" }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/logout",
+            "auth": { "type": "noauth" }
+          }
+        },
+        {
+          "name": "Request Password Reset",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/password-reset/request",
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer@test.com\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Confirm Password Reset",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/password-reset/confirm",
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"PASTE_TOKEN_HERE\",\n  \"newPassword\": \"NewPass@123\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User (Self-Service)",
+      "item": [
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/users/me"
+          }
+        },
+        {
+          "name": "Update My Profile",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/users/me",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Updated Name\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users (Admin)",
+      "item": [
+        {
+          "name": "List All Users",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/users?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "role", "value": "CUSTOMER", "disabled": true },
+                { "key": "isActive", "value": "true", "disabled": true },
+                { "key": "q", "value": "", "disabled": true }
+              ]
+            },
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] }
+          }
+        },
+        {
+          "name": "Get User by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) {",
+                  "  pm.collectionVariables.set('targetUserId', res.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/users/{{targetUserId}}",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] }
+          }
+        },
+        {
+          "name": "Update User (Role/Status)",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/users/{{targetUserId}}",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"ADMIN\",\n  \"isActive\": true\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Addresses",
+      "item": [
+        {
+          "name": "List My Addresses",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/addresses"
+          }
+        },
+        {
+          "name": "Create Address",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) {",
+                  "  pm.collectionVariables.set('addressId', res.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/addresses",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"Home\",\n  \"fullName\": \"Test Customer\",\n  \"phonePrimary\": \"+972501234567\",\n  \"phoneSecondary\": \"+972509876543\",\n  \"country\": \"Palestine\",\n  \"city\": \"Ramallah\",\n  \"area\": \"Al-Masyoun\",\n  \"addressLine1\": \"123 Main Street\",\n  \"addressLine2\": \"Building 4, Floor 2\",\n  \"postalCode\": \"12345\",\n  \"isDefault\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Address",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/addresses/{{addressId}}"
+          }
+        },
+        {
+          "name": "Update Address",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/addresses/{{addressId}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"Work\",\n  \"city\": \"Nablus\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Address",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/addresses/{{addressId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categories (Public)",
+      "item": [
+        {
+          "name": "List All Categories (Tree)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/categories",
+            "auth": { "type": "noauth" }
+          }
+        },
+        {
+          "name": "Get Category by Slug",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/categories/electronics",
+            "auth": { "type": "noauth" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categories (Admin)",
+      "item": [
+        {
+          "name": "Create Category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) {",
+                  "  pm.collectionVariables.set('categoryId', res.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/categories",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Smartphones\",\n  \"parentId\": \"{{categoryId}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Category",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/categories/{{categoryId}}",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Category Name\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Category",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/categories/{{categoryId}}",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products (Public)",
+      "item": [
+        {
+          "name": "Search Products",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/products?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "q", "value": "", "disabled": true },
+                { "key": "category", "value": "electronics", "disabled": true },
+                { "key": "brand", "value": "SoundTech", "disabled": true },
+                { "key": "minPrice", "value": "1000", "disabled": true },
+                { "key": "maxPrice", "value": "50000", "disabled": true },
+                { "key": "status", "value": "ACTIVE", "disabled": true }
+              ]
+            },
+            "auth": { "type": "noauth" }
+          }
+        },
+        {
+          "name": "Get Product by Slug",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/products/slug/wireless-bluetooth-headphones",
+            "auth": { "type": "noauth" }
+          }
+        },
+        {
+          "name": "Get Product by ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/products/{{productId}}",
+            "auth": { "type": "noauth" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products (Admin)",
+      "item": [
+        {
+          "name": "Create Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) {",
+                  "  pm.collectionVariables.set('productId', res.data.id);",
+                  "  if (res.data.variants && res.data.variants.length > 0) {",
+                  "    pm.collectionVariables.set('variantId', res.data.variants[0].id);",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/products",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Wireless Mouse\",\n  \"description\": \"Ergonomic wireless mouse with USB-C receiver\",\n  \"brand\": \"TechGear\",\n  \"priceCents\": 7900,\n  \"compareAtPriceCents\": 9900,\n  \"currency\": \"ILS\",\n  \"status\": \"DRAFT\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Product (with Categories)",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/products/{{productId}}",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Product Title\",\n  \"priceCents\": 8500,\n  \"status\": \"ACTIVE\",\n  \"categoryIds\": [\"{{categoryId}}\"]\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Product",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/products/{{productId}}",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Variants",
+      "item": [
+        {
+          "name": "List Variants for Product",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/variants/product/{{productId}}",
+            "auth": { "type": "noauth" }
+          }
+        },
+        {
+          "name": "Get Variant by ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/variants/{{variantId}}",
+            "auth": { "type": "noauth" }
+          }
+        },
+        {
+          "name": "[Admin] Create Variant",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) {",
+                  "  pm.collectionVariables.set('variantId', res.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/variants/product/{{productId}}",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sku\": \"NEW-VAR-001\",\n  \"barcode\": \"7290000000001\",\n  \"priceCents\": 9900,\n  \"compareAtPriceCents\": 12900,\n  \"currency\": \"ILS\",\n  \"optionValues\": { \"color\": \"Red\", \"size\": \"XL\" },\n  \"initialStock\": 50\n}"
+            }
+          }
+        },
+        {
+          "name": "[Admin] Update Variant",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/variants/{{variantId}}",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"priceCents\": 8500,\n  \"optionValues\": { \"color\": \"Red\", \"size\": \"L\" },\n  \"isActive\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "[Admin] Delete Variant",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/variants/{{variantId}}",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Images (File Upload)",
+      "item": [
+        {
+          "name": "Product Images",
+          "item": [
+            {
+              "name": "List Product Images",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/images/product/{{productId}}",
+                "auth": { "type": "noauth" }
+              }
+            },
+            {
+              "name": "[Admin] Upload Product Images",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const res = pm.response.json();",
+                      "if (res.success && res.data && res.data.length > 0) {",
+                      "  pm.collectionVariables.set('imageId', res.data[0].id);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/images/product/{{productId}}",
+                "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    { "key": "images", "type": "file", "src": "", "description": "Select image file(s)" },
+                    { "key": "images", "type": "file", "src": "", "description": "Second image (optional)", "disabled": true },
+                    { "key": "alt", "type": "text", "value": "Product photo" }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "[Admin] Update Product Image",
+              "request": {
+                "method": "PATCH",
+                "url": "{{baseUrl}}/api/images/product/{{productId}}/{{imageId}}",
+                "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"alt\": \"Updated product image alt\",\n  \"sortOrder\": 1\n}"
+                }
+              }
+            },
+            {
+              "name": "[Admin] Delete Product Image",
+              "request": {
+                "method": "DELETE",
+                "url": "{{baseUrl}}/api/images/product/{{productId}}/{{imageId}}",
+                "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Variant Images",
+          "item": [
+            {
+              "name": "List Variant Images",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/images/variant/{{variantId}}",
+                "auth": { "type": "noauth" }
+              }
+            },
+            {
+              "name": "[Admin] Upload Variant Images",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const res = pm.response.json();",
+                      "if (res.success && res.data && res.data.length > 0) {",
+                      "  pm.collectionVariables.set('imageId', res.data[0].id);",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/images/variant/{{variantId}}",
+                "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    { "key": "images", "type": "file", "src": "", "description": "Select image file(s)" },
+                    { "key": "images", "type": "file", "src": "", "description": "Second image (optional)", "disabled": true },
+                    { "key": "alt", "type": "text", "value": "Variant photo" }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "[Admin] Update Variant Image",
+              "request": {
+                "method": "PATCH",
+                "url": "{{baseUrl}}/api/images/variant/{{variantId}}/{{imageId}}",
+                "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"alt\": \"Updated variant image alt\",\n  \"sortOrder\": 0\n}"
+                }
+              }
+            },
+            {
+              "name": "[Admin] Delete Variant Image",
+              "request": {
+                "method": "DELETE",
+                "url": "{{baseUrl}}/api/images/variant/{{variantId}}/{{imageId}}",
+                "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Get My Cart",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/cart"
+          }
+        },
+        {
+          "name": "Add Item to Cart",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success && res.data.items && res.data.items.length > 0) {",
+                  "  pm.collectionVariables.set('cartItemId', res.data.items[res.data.items.length - 1].id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/cart/items",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"variantId\": \"{{variantId}}\",\n  \"quantity\": 2\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Cart Item Quantity",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/cart/items/{{cartItemId}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 3\n}"
+            }
+          }
+        },
+        {
+          "name": "Remove Cart Item",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/cart/items/{{cartItemId}}"
+          }
+        },
+        {
+          "name": "Clear Cart",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/cart"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Checkout (Create Order)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) {",
+                  "  pm.collectionVariables.set('orderId', res.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/orders/checkout",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerName\": \"Test Customer\",\n  \"customerEmail\": \"customer@test.com\",\n  \"phonePrimary\": \"+972501234567\",\n  \"country\": \"Palestine\",\n  \"city\": \"Ramallah\",\n  \"area\": \"Al-Masyoun\",\n  \"addressLine1\": \"123 Main Street\",\n  \"deliveryNotes\": \"Ring doorbell twice\",\n  \"currency\": \"ILS\",\n  \"shippingCents\": 1500,\n  \"discountCents\": 0,\n  \"taxCents\": 0\n}"
+            }
+          }
+        },
+        {
+          "name": "My Orders",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/my?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders", "my"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get My Order by ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/orders/my/{{orderId}}"
+          }
+        },
+        {
+          "name": "[Admin] All Orders",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/orders?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "orders"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "status", "value": "PENDING", "disabled": true }
+              ]
+            },
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] }
+          }
+        },
+        {
+          "name": "[Admin] Update Order Status",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/orders/{{orderId}}/status",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CONFIRMED\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Admin] Update Order Payment",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/orders/{{orderId}}/payment",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paymentMethod\": \"COD\",\n  \"paymentStatus\": \"COLLECTED\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inventory (Admin)",
+      "item": [
+        {
+          "name": "List All Inventory",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/inventory?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "inventory"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            },
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] }
+          }
+        },
+        {
+          "name": "Get Inventory for Variant",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/inventory/{{variantId}}",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] }
+          }
+        },
+        {
+          "name": "Receive Stock (Restock)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/inventory/receive",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"variantId\": \"{{variantId}}\",\n  \"quantity\": 100,\n  \"note\": \"New shipment received\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Adjust Stock",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/inventory/adjust",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"variantId\": \"{{variantId}}\",\n  \"quantity\": -5,\n  \"note\": \"Damaged items removed\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Safety Stock",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/inventory/{{variantId}}/safety-stock",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"safetyStock\": 10\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Movement History",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/inventory/{{variantId}}/movements?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "inventory", "{{variantId}}", "movements"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            },
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit (Admin)",
+      "item": [
+        {
+          "name": "Get Audit Logs",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/audit?page=1&limit=30",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "audit"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "30" },
+                { "key": "entityType", "value": "Product", "disabled": true },
+                { "key": "entityId", "value": "", "disabled": true },
+                { "key": "actorUserId", "value": "", "disabled": true }
+              ]
+            },
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Chat (AI Assistant)",
+      "item": [
+        {
+          "name": "Send Message",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/chat",
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Show me some products\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Send Message (with History)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/chat",
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"What about cheaper ones?\",\n  \"history\": [\n    { \"role\": \"user\", \"content\": \"Show me electronics\" },\n    { \"role\": \"assistant\", \"content\": \"Here are some electronics products...\" }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Search by Category",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/chat",
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Find me electronics under 100 ILS\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Categories",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/chat",
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"What categories do you have?\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Product Details",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/chat",
+            "auth": { "type": "noauth" },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Tell me more about the iPhone 15 Pro\"\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
