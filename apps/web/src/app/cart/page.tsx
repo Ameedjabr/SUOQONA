@@ -9,8 +9,11 @@ import { Card, Button, Loader, EmptyState, Toast } from "@/components/ui";
 import { cartApi } from "@/services/api";
 import { useAuth } from "@/providers/AuthProvider";
 import ChatWidget from "@/components/ChatWidget";
+import { useTranslation } from "react-i18next";
+import "@/i18n";
 
 export default function CartPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { accessToken, isAuthenticated } = useAuth();
 
@@ -48,7 +51,7 @@ export default function CartPage() {
     try {
       await cartApi.removeItem(accessToken, itemId);
       setCartItems((prev) => prev.filter((item) => item.id !== itemId));
-      setSuccess("Item removed from cart");
+      setSuccess(t("cartPage.itemRemoved"));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to remove item");
     } finally {
@@ -72,8 +75,8 @@ export default function CartPage() {
   };
 
   const subtotal = cartItems.reduce((sum, item) => sum + item.variant.priceCents * item.quantity, 0);
-  const shipping = 0; // TODO: Calculate based on address
-  const tax = Math.round(subtotal * 0.17); // 17% VAT for Israel
+  const shipping = 0;
+  const tax = Math.round(subtotal * 0.17);
   const total = subtotal + shipping + tax;
 
   if (isLoading) {
@@ -81,7 +84,7 @@ export default function CartPage() {
       <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
         <div className="flex-1 flex items-center justify-center">
-          <Loader label="Loading cart..." />
+          <Loader label={t("cartPage.loadingCart")} />
         </div>
         <Footer />
       </div>
@@ -94,12 +97,10 @@ export default function CartPage() {
 
       <main className="flex-1">
         <div className="max-w-7xl mx-auto px-4 py-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-8">Shopping Cart</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-8">{t("cartPage.title")}</h1>
 
           {error && <Toast type="error" message={error} onClose={() => setError(null)} />}
-          {success && (
-            <Toast type="success" message={success} onClose={() => setSuccess(null)} />
-          )}
+          {success && <Toast type="success" message={success} onClose={() => setSuccess(null)} />}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Items */}
@@ -107,11 +108,11 @@ export default function CartPage() {
               {cartItems.length === 0 ? (
                 <Card>
                   <EmptyState
-                    title="Your cart is empty"
-                    description="Add some products to get started"
+                    title={t("cartPage.empty")}
+                    description={t("cartPage.emptyDesc")}
                     action={
                       <Link href="/products">
-                        <Button>Continue Shopping</Button>
+                        <Button>{t("cartPage.continueShopping")}</Button>
                       </Link>
                     }
                   />
@@ -131,7 +132,7 @@ export default function CartPage() {
                           {item.variant.product.title}
                         </h3>
                         <p className="text-sm text-gray-600 mt-1">
-                          SKU: {item.variant.sku}
+                          {t("cartPage.sku")}: {item.variant.sku}
                         </p>
                         <p className="text-lg font-bold text-indigo-600 mt-2">
                           ₪{(item.variant.priceCents / 100).toFixed(2)}
@@ -145,14 +146,12 @@ export default function CartPage() {
                           className="text-red-600 hover:text-red-700 text-sm font-medium transition"
                           disabled={isUpdating}
                         >
-                          Remove
+                          {t("cartPage.remove")}
                         </button>
 
                         <div className="flex items-center gap-2 border border-gray-300 rounded-lg">
                           <button
-                            onClick={() =>
-                              handleUpdateQuantity(item.id, Math.max(1, item.quantity - 1))
-                            }
+                            onClick={() => handleUpdateQuantity(item.id, Math.max(1, item.quantity - 1))}
                             className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 transition"
                             disabled={isUpdating}
                           >
@@ -173,7 +172,7 @@ export default function CartPage() {
 
                       {/* Subtotal */}
                       <div className="text-right">
-                        <p className="text-sm text-gray-600">Subtotal</p>
+                        <p className="text-sm text-gray-600">{t("cartPage.subtotal")}</p>
                         <p className="text-lg font-semibold text-gray-900 mt-1">
                           ₪{((item.variant.priceCents * item.quantity) / 100).toFixed(2)}
                         </p>
@@ -186,23 +185,23 @@ export default function CartPage() {
 
             {/* Summary */}
             <div>
-              <Card title="Order Summary">
+              <Card title={t("cartPage.orderSummary")}>
                 <div className="space-y-4">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Subtotal</span>
+                    <span className="text-gray-600">{t("cartPage.subtotal")}</span>
                     <span className="font-medium">₪{(subtotal / 100).toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Tax (17%)</span>
+                    <span className="text-gray-600">{t("cartPage.tax")}</span>
                     <span className="font-medium">₪{(tax / 100).toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Shipping</span>
+                    <span className="text-gray-600">{t("cartPage.shipping")}</span>
                     <span className="font-medium">₪{(shipping / 100).toFixed(2)}</span>
                   </div>
 
                   <div className="border-t border-gray-200 pt-4 flex justify-between">
-                    <span className="font-semibold text-gray-900">Total</span>
+                    <span className="font-semibold text-gray-900">{t("cartPage.total")}</span>
                     <span className="text-2xl font-bold text-indigo-600">
                       ₪{(total / 100).toFixed(2)}
                     </span>
@@ -213,12 +212,12 @@ export default function CartPage() {
                     disabled={cartItems.length === 0 || isUpdating}
                     className="w-full"
                   >
-                    Proceed to Checkout
+                    {t("cartPage.proceedToCheckout")}
                   </Button>
 
                   <Link href="/products">
                     <Button variant="secondary" className="w-full">
-                      Continue Shopping
+                      {t("cartPage.continueShopping")}
                     </Button>
                   </Link>
                 </div>

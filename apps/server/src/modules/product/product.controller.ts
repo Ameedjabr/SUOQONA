@@ -10,6 +10,7 @@ export async function search(req: Request, res: Response, next: NextFunction) {
       brand: req.query.brand as string,
       status: req.query.status as ProductStatus,
       search: req.query.q as string,
+      sort: req.query.sort as string,
       minPrice: req.query.minPrice ? parseInt(req.query.minPrice as string, 10) : undefined,
       maxPrice: req.query.maxPrice ? parseInt(req.query.maxPrice as string, 10) : undefined,
       page: req.query.page ? parseInt(req.query.page as string, 10) : 1,

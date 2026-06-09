@@ -114,7 +114,7 @@ export default function OrderDetail() {
   return (
     <ProtectedRoute requiredRole="ADMIN">
       <AdminLayout currentPage="orders">
-        <div className="p-6 max-w-5xl mx-auto space-y-5">
+        <div className="p-5 max-w-6xl mx-auto space-y-4">
 
           {/* Header */}
           <div className="flex items-center justify-between">
@@ -126,8 +126,8 @@ export default function OrderDetail() {
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-slate-900">Order #{order.orderNumber}</h1>
-                <p className="text-sm text-slate-500 mt-0.5">
+                <h1 className="text-3xl font-bold text-slate-900">Order #{order.orderNumber}</h1>
+                <p className="text-base text-slate-500 mt-1">
                   Placed on {new Date(order.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
                 </p>
               </div>
@@ -157,7 +157,7 @@ export default function OrderDetail() {
           {/* Progress Tracker */}
           {!isCancelled && (
             <div className="bg-white rounded-2xl border border-slate-200 p-6">
-              <h2 className="text-sm font-semibold text-slate-700 mb-5">Order Progress</h2>
+              <h2 className="text-base font-semibold text-slate-700 mb-5">Order Progress</h2>
               <div className="flex items-center">
                 {ORDER_STEPS.map((step, i) => {
                   const isComplete = i <= currentStepIndex;
@@ -194,7 +194,7 @@ export default function OrderDetail() {
               <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
                 <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-2">
                   <Package className="w-4 h-4 text-slate-400" />
-                  <h2 className="text-sm font-semibold text-slate-900">Order Items</h2>
+                  <h2 className="text-base font-semibold text-slate-900">Order Items</h2>
                   <span className="ml-auto text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
                     {order.items?.length || 0} item(s)
                   </span>
@@ -245,7 +245,7 @@ export default function OrderDetail() {
               <div className="bg-white rounded-2xl border border-slate-200 p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <RefreshCw className="w-4 h-4 text-slate-400" />
-                  <h2 className="text-sm font-semibold text-slate-900">Update Status</h2>
+                  <h2 className="text-base font-semibold text-slate-900">Update Status</h2>
                 </div>
                 <select
                   value={newStatus}
@@ -270,7 +270,7 @@ export default function OrderDetail() {
               <div className="bg-white rounded-2xl border border-slate-200 p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <CreditCard className="w-4 h-4 text-slate-400" />
-                  <h2 className="text-sm font-semibold text-slate-900">Payment</h2>
+                  <h2 className="text-base font-semibold text-slate-900">Payment</h2>
                 </div>
                 <div className="space-y-2.5 text-sm">
                   <div className="flex justify-between">
@@ -296,7 +296,7 @@ export default function OrderDetail() {
               <div className="bg-white rounded-2xl border border-slate-200 p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <User className="w-4 h-4 text-slate-400" />
-                  <h2 className="text-sm font-semibold text-slate-900">Customer</h2>
+                  <h2 className="text-base font-semibold text-slate-900">Customer</h2>
                 </div>
                 <div className="space-y-2.5 text-sm">
                   <div className="flex items-center gap-2">
@@ -320,7 +320,7 @@ export default function OrderDetail() {
               <div className="bg-white rounded-2xl border border-slate-200 p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <MapPin className="w-4 h-4 text-slate-400" />
-                  <h2 className="text-sm font-semibold text-slate-900">Shipping Address</h2>
+                  <h2 className="text-base font-semibold text-slate-900">Shipping Address</h2>
                 </div>
                 <div className="text-sm text-slate-600 space-y-1">
                   <p className="font-medium text-slate-900">{order.customerName}</p>

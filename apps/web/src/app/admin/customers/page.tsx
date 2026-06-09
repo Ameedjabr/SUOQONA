@@ -60,13 +60,13 @@ export default function AdminCustomers() {
   return (
     <ProtectedRoute requiredRole="ADMIN">
       <AdminLayout currentPage="customers">
-        <div className="p-6 space-y-5 max-w-7xl mx-auto">
+        <div className="p-5 space-y-4 max-w-[1400px] mx-auto">
 
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">Customers</h1>
-              <p className="text-slate-500 text-sm mt-0.5">
+              <h1 className="text-3xl font-bold text-slate-900">Customers</h1>
+              <p className="text-slate-500 text-base mt-1">
                 {total > 0 ? `${total.toLocaleString()} registered users` : "Manage your user base"}
               </p>
             </div>
@@ -91,13 +91,13 @@ export default function AdminCustomers() {
               { label: "Active", value: active, icon: UserCheck, color: "text-emerald-700", bg: "bg-emerald-50", iconColor: "text-emerald-500" },
               { label: "Inactive", value: inactive, icon: UserX, color: "text-red-700", bg: "bg-red-50", iconColor: "text-red-500" },
             ].map((s) => (
-              <div key={s.label} className="bg-white rounded-xl border border-slate-200 px-4 py-3 flex items-center gap-3">
-                <div className={`w-9 h-9 ${s.bg} rounded-xl flex items-center justify-center`}>
-                  <s.icon className={`w-4 h-4 ${s.iconColor}`} />
+              <div key={s.label} className="bg-white rounded-xl border border-slate-200 px-4 py-3 flex items-center gap-3 hover:shadow-md hover:scale-[1.02] transition-all duration-200">
+                <div className={`w-10 h-10 ${s.bg} rounded-xl flex items-center justify-center`}>
+                  <s.icon className={`w-5 h-5 ${s.iconColor}`} />
                 </div>
                 <div>
                   <p className="text-xs text-slate-400 font-medium">{s.label}</p>
-                  <p className={`text-xl font-bold ${s.color}`}>{s.value}</p>
+                  <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
                 </div>
               </div>
             ))}

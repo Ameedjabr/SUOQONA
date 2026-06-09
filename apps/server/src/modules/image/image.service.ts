@@ -7,9 +7,7 @@ import path from "path";
 const UPLOAD_DIR = path.resolve(__dirname, "../../../uploads");
 
 function fileToUrl(filename: string): string {
-  const base = env.NODE_ENV === "production"
-    ? process.env.APP_URL || `http://localhost:${env.PORT}`
-    : `http://localhost:${env.PORT}`;
+  const base = process.env.APP_URL || `http://localhost:${env.PORT}`;
   return `${base}/uploads/${filename}`;
 }
 

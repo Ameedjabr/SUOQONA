@@ -130,12 +130,12 @@ export default function AdminDashboard() {
   return (
     <ProtectedRoute requiredRole="ADMIN">
       <AdminLayout currentPage="dashboard">
-        <div className="p-6 space-y-6 max-w-7xl mx-auto">
+        <div className="p-5 space-y-4 max-w-[1400px] mx-auto">
 
           {/* Page Header */}
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Overview</h1>
-            <p className="text-slate-500 text-sm mt-0.5">Welcome back — here's what's happening in your store.</p>
+            <h1 className="text-3xl font-bold text-slate-900">Overview</h1>
+            <p className="text-slate-500 text-base mt-1">Welcome back — here's what's happening in your store.</p>
           </div>
 
           {/* Stat Cards */}
@@ -148,22 +148,22 @@ export default function AdminDashboard() {
             {statCards.map((card) => (
               <motion.div key={card.title} variants={itemVariants}>
                 <Link href={card.href}>
-                  <div className="bg-white rounded-2xl border border-slate-200 p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer">
+                  <div className="bg-white rounded-2xl border border-slate-200 p-6 hover:shadow-lg hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer">
                     <div className="flex items-start justify-between mb-4">
-                      <div className={`w-10 h-10 ${card.bg} rounded-xl flex items-center justify-center`}>
-                        <card.icon className={`w-5 h-5 ${card.iconColor}`} />
+                      <div className={`w-12 h-12 ${card.bg} rounded-xl flex items-center justify-center`}>
+                        <card.icon className={`w-6 h-6 ${card.iconColor}`} />
                       </div>
-                      <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-slate-500 transition-colors" />
+                      <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-400 transition-colors" />
                     </div>
                     {isLoading ? (
                       <div className="space-y-2">
-                        <div className="h-7 bg-slate-100 rounded-lg animate-pulse w-24" />
+                        <div className="h-8 bg-slate-100 rounded-lg animate-pulse w-24" />
                         <div className="h-4 bg-slate-100 rounded animate-pulse w-16" />
                       </div>
                     ) : (
                       <>
-                        <p className="text-2xl font-bold text-slate-900 tabular-nums">{card.value}</p>
-                        <p className="text-sm text-slate-500 mt-0.5">{card.title}</p>
+                        <p className="text-3xl font-bold text-slate-900 tabular-nums">{card.value}</p>
+                        <p className="text-sm text-slate-500 mt-1 font-medium">{card.title}</p>
                       </>
                     )}
                   </div>
@@ -172,7 +172,7 @@ export default function AdminDashboard() {
             ))}
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             {/* Recent Orders */}
             <motion.div
               variants={itemVariants}
@@ -180,8 +180,8 @@ export default function AdminDashboard() {
               animate="visible"
               className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 overflow-hidden"
             >
-              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-                <h2 className="text-base font-semibold text-slate-900">Recent Orders</h2>
+              <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+                <h2 className="text-lg font-semibold text-slate-900">Recent Orders</h2>
                 <Link
                   href="/admin/orders"
                   className="text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-1 font-medium"
@@ -253,7 +253,7 @@ export default function AdminDashboard() {
               className="bg-white rounded-2xl border border-slate-200 overflow-hidden"
             >
               <div className="px-6 py-4 border-b border-slate-100">
-                <h2 className="text-base font-semibold text-slate-900">Quick Actions</h2>
+                <h2 className="text-lg font-semibold text-slate-900">Quick Actions</h2>
               </div>
               <div className="p-4 space-y-2">
                 {[

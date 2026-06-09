@@ -18,8 +18,25 @@ export interface ProductFilter {
   minPrice?: number; // in cents
   maxPrice?: number; // in cents
   search?: string;
+  sort?: string;    // "newest" | "price-asc" | "price-desc"
   page?: number;
   limit?: number;
+}
+
+async function getCategoryAndDescendantIds(slug: string): Promise<string[]> {
+  const root = await prisma.category.findUnique({ where: { slug } });
+  if (!root) return [];
+
+  const collect = async (parentId: string): Promise<string[]> => {
+    const children = await prisma.category.findMany({ where: { parentId } });
+    const ids: string[] = children.map((c) => c.id);
+    for (const child of children) {
+      ids.push(...(await collect(child.id)));
+    }
+    return ids;
+  };
+
+  return [root.id, ...(await collect(root.id))];
 }
 
 export async function searchProducts(filters: ProductFilter) {
@@ -48,9 +65,10 @@ export async function searchProducts(filters: ProductFilter) {
   }
 
   if (filters.categorySlug) {
-    where.categories = {
-      some: { category: { slug: filters.categorySlug } },
-    };
+    const categoryIds = await getCategoryAndDescendantIds(filters.categorySlug);
+    if (categoryIds.length > 0) {
+      where.categories = { some: { categoryId: { in: categoryIds } } };
+    }
   }
 
   if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
@@ -64,25 +82,33 @@ export async function searchProducts(filters: ProductFilter) {
     ];
   }
 
+  let orderBy: Prisma.ProductOrderByWithRelationInput;
+  if (filters.sort === "price-asc") {
+    orderBy = { priceCents: "asc" };
+  } else if (filters.sort === "price-desc") {
+    orderBy = { priceCents: "desc" };
+  } else {
+    orderBy = { createdAt: "desc" };
+  }
+
   const [products, total] = await Promise.all([
     prisma.product.findMany({
       where,
       include: productInclude,
       skip,
       take: limit,
-      orderBy: { createdAt: "desc" },
+      orderBy,
     }),
     prisma.product.count({ where }),
   ]);
 
+  const totalPages = Math.ceil(total / limit) || 1;
   return {
     products,
-    pagination: {
-      page,
-      limit,
-      total,
-      totalPages: Math.ceil(total / limit),
-    },
+    total,
+    pages: totalPages,
+    page,
+    pagination: { page, limit, total, totalPages },
   };
 }
 

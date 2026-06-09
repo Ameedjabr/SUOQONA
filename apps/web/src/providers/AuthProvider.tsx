@@ -3,6 +3,14 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 import { authApi, userApi, User, ApiError } from "../services/api";
 
+function persistUser(user: User | null) {
+  if (user) localStorage.setItem("authUser", JSON.stringify(user));
+  else localStorage.removeItem("authUser");
+}
+function loadUser(): User | null {
+  try { return JSON.parse(localStorage.getItem("authUser") || "null"); } catch { return null; }
+}
+
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
@@ -12,6 +20,7 @@ interface AuthContextType {
   register: (email: string, password: string, fullName: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshToken: () => Promise<void>;
+  updateUser: (updated: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -24,18 +33,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Restore auth state from storage on mount
   useEffect(() => {
     const storedToken = localStorage.getItem("accessToken");
-    if (storedToken) {
+    const storedUser = loadUser();
+
+    if (storedToken && storedUser) {
+      // Restore immediately from localStorage so ProtectedRoute doesn't flash
       setAccessToken(storedToken);
-      // Verify token is still valid by calling refresh
-      refreshAuthToken(storedToken).catch(() => {
-        localStorage.removeItem("accessToken");
-        setAccessToken(null);
-      });
+      setUser(storedUser);
+      setIsLoading(false);
+
+      // Then refresh in background to get a fresh token + updated user
+      authApi.refresh()
+        .then((result) => {
+          setAccessToken(result.accessToken);
+          localStorage.setItem("accessToken", result.accessToken);
+          // Fetch fresh user profile
+          return userApi.getProfile(result.accessToken);
+        })
+        .then((freshUser) => {
+          setUser(freshUser);
+          persistUser(freshUser);
+        })
+        .catch(() => {
+          // Refresh token expired — clear everything
+          setAccessToken(null);
+          setUser(null);
+          persistUser(null);
+          localStorage.removeItem("accessToken");
+        });
+    } else {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }, []);
 
-  const refreshAuthToken = useCallback(async (token?: string) => {
+  const refreshAuthToken = useCallback(async () => {
     try {
       const result = await authApi.refresh();
       const newToken = result.accessToken;
@@ -53,6 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setAccessToken(result.accessToken);
       setUser(result.user);
       localStorage.setItem("accessToken", result.accessToken);
+      persistUser(result.user);
     } catch (err) {
       const message = err instanceof ApiError ? err.message : "Login failed";
       throw new Error(message);
@@ -68,12 +99,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setAccessToken(result.accessToken);
       setUser(result.user);
       localStorage.setItem("accessToken", result.accessToken);
+      persistUser(result.user);
     } catch (err) {
       const message = err instanceof ApiError ? err.message : "Registration failed";
       throw new Error(message);
     } finally {
       setIsLoading(false);
     }
+  }, []);
+
+  const updateUser = useCallback((updated: Partial<User>) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      const next = { ...prev, ...updated };
+      persistUser(next);
+      return next;
+    });
   }, []);
 
   const logout = useCallback(async () => {
@@ -85,6 +126,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setAccessToken(null);
       setUser(null);
       localStorage.removeItem("accessToken");
+      persistUser(null);
     }
   }, []);
 
@@ -99,6 +141,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         register,
         logout,
         refreshToken: refreshAuthToken,
+        updateUser,
       }}
     >
       {children}

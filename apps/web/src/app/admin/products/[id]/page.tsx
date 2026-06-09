@@ -341,7 +341,7 @@ export default function ProductForm() {
   return (
     <ProtectedRoute requiredRole="ADMIN">
       <AdminLayout currentPage="products">
-        <div className="p-6 max-w-4xl mx-auto space-y-5">
+        <div className="p-5 max-w-5xl mx-auto space-y-4">
           <Toast toast={toast} />
 
           {/* Header */}
@@ -351,8 +351,8 @@ export default function ProductForm() {
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">{isNew ? "Create Product" : "Edit Product"}</h1>
-              <p className="text-sm text-slate-500 mt-0.5">
+              <h1 className="text-3xl font-bold text-slate-900">{isNew ? "Create Product" : "Edit Product"}</h1>
+              <p className="text-base text-slate-500 mt-1">
                 {isNew ? "Fill in the details below — variants & images can be added after saving" : formData.title}
               </p>
             </div>
@@ -814,7 +814,7 @@ function Section({ icon: Icon, title, children }: {
     <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
       <div className="flex items-center gap-2 px-6 py-4 border-b border-slate-100">
         <Icon className="w-4 h-4 text-slate-400" />
-        <h2 className="text-sm font-semibold text-slate-900">{title}</h2>
+        <h2 className="text-base font-semibold text-slate-900">{title}</h2>
       </div>
       <div className="p-6">{children}</div>
     </div>

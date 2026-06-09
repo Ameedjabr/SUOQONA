@@ -135,7 +135,7 @@ export default function AdminCategories() {
   return (
     <ProtectedRoute requiredRole="ADMIN">
       <AdminLayout currentPage="categories">
-        <div className="p-6 space-y-5 max-w-4xl mx-auto">
+        <div className="p-5 space-y-4 max-w-5xl mx-auto">
 
           {/* Toast */}
           <AnimatePresence>
@@ -153,8 +153,8 @@ export default function AdminCategories() {
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">Categories</h1>
-              <p className="text-slate-500 text-sm mt-0.5">Organise your product catalogue into categories</p>
+              <h1 className="text-3xl font-bold text-slate-900">Categories</h1>
+              <p className="text-slate-500 text-base mt-1">Organise your product catalogue into categories</p>
             </div>
             <button onClick={openCreate}
               className="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm">
@@ -169,9 +169,9 @@ export default function AdminCategories() {
               { label: "Top-level", value: categories.length },
               { label: "Nested", value: flat.length - categories.length },
             ].map((s) => (
-              <div key={s.label} className="bg-white rounded-xl border border-slate-200 px-4 py-3">
+              <div key={s.label} className="bg-white rounded-xl border border-slate-200 px-4 py-3 hover:shadow-md hover:scale-[1.02] transition-all duration-200">
                 <p className="text-xs text-slate-400 font-medium">{s.label}</p>
-                <p className="text-xl font-bold text-slate-700 mt-0.5">{s.value}</p>
+                <p className="text-2xl font-bold text-slate-700 mt-0.5">{s.value}</p>
               </div>
             ))}
           </div>

@@ -1,4 +1,8 @@
 /// <reference types="node" />
+import * as dotenv from "dotenv";
+import * as path from "path";
+dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
+
 import { PrismaClient } from "@prisma/client";
 import * as bcrypt from "bcryptjs";
 
@@ -40,62 +44,86 @@ async function main() {
 
   const electronics = await prisma.category.upsert({
     where: { slug: "electronics" },
-    update: {},
-    create: { name: "Electronics", slug: "electronics" },
+    update: { image: "https://images.unsplash.com/photo-1526738549149-8e07eca6c147?w=3840&q=100" },
+    create: { name: "Electronics", slug: "electronics", image: "https://images.unsplash.com/photo-1526738549149-8e07eca6c147?w=3840&q=100" },
   });
 
   const phones = await prisma.category.upsert({
     where: { slug: "phones" },
-    update: {},
-    create: { name: "Phones", slug: "phones", parentId: electronics.id },
+    update: { image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=3840&q=100" },
+    create: { name: "Phones", slug: "phones", parentId: electronics.id, image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=3840&q=100" },
   });
 
   const laptops = await prisma.category.upsert({
     where: { slug: "laptops" },
-    update: {},
-    create: { name: "Laptops", slug: "laptops", parentId: electronics.id },
+    update: { image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=3840&q=100" },
+    create: { name: "Laptops", slug: "laptops", parentId: electronics.id, image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=3840&q=100" },
   });
 
   const accessories = await prisma.category.upsert({
     where: { slug: "accessories" },
-    update: {},
-    create: { name: "Accessories", slug: "accessories", parentId: electronics.id },
+    update: { parentId: null, image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=3840&q=100" },
+    create: { name: "Accessories", slug: "accessories", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=3840&q=100" },
   });
 
   const clothing = await prisma.category.upsert({
     where: { slug: "clothing" },
-    update: {},
-    create: { name: "Clothing", slug: "clothing" },
+    update: { image: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=3840&q=100" },
+    create: { name: "Clothing", slug: "clothing", image: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=3840&q=100" },
   });
 
   const mensClothing = await prisma.category.upsert({
     where: { slug: "mens-clothing" },
-    update: {},
-    create: { name: "Men's Clothing", slug: "mens-clothing", parentId: clothing.id },
+    update: { image: "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=3840&q=100" },
+    create: { name: "Men's Clothing", slug: "mens-clothing", parentId: clothing.id, image: "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=3840&q=100" },
   });
 
   const womensClothing = await prisma.category.upsert({
     where: { slug: "womens-clothing" },
-    update: {},
-    create: { name: "Women's Clothing", slug: "womens-clothing", parentId: clothing.id },
+    update: { image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=3840&q=100" },
+    create: { name: "Women's Clothing", slug: "womens-clothing", parentId: clothing.id, image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=3840&q=100" },
   });
 
   const home = await prisma.category.upsert({
     where: { slug: "home" },
-    update: {},
-    create: { name: "Home & Kitchen", slug: "home" },
+    update: { image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=3840&q=100" },
+    create: { name: "Home & Kitchen", slug: "home", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=3840&q=100" },
   });
 
   const furniture = await prisma.category.upsert({
     where: { slug: "furniture" },
-    update: {},
-    create: { name: "Furniture", slug: "furniture", parentId: home.id },
+    update: { image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=3840&q=100" },
+    create: { name: "Furniture", slug: "furniture", parentId: home.id, image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=3840&q=100" },
   });
 
   const kitchen = await prisma.category.upsert({
     where: { slug: "kitchen" },
-    update: {},
-    create: { name: "Kitchen", slug: "kitchen", parentId: home.id },
+    update: { image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=3840&q=100" },
+    create: { name: "Kitchen", slug: "kitchen", parentId: home.id, image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=3840&q=100" },
+  });
+
+  const sports = await prisma.category.upsert({
+    where: { slug: "sports" },
+    update: { image: "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=3840&q=100" },
+    create: { name: "Sports", slug: "sports", image: "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=3840&q=100" },
+  });
+
+  await prisma.category.upsert({
+    where: { slug: "football" },
+    update: { image: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=3840&q=100" },
+    create: { name: "Football", slug: "football", parentId: sports.id, image: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=3840&q=100" },
+  });
+
+  await prisma.category.upsert({
+    where: { slug: "basketball" },
+    update: { image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=3840&q=100" },
+    create: { name: "Basketball", slug: "basketball", parentId: sports.id, image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=3840&q=100" },
+  });
+
+  await prisma.category.upsert({
+    where: { slug: "fitness" },
+    update: { image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=3840&q=100" },
+    create: { name: "Fitness", slug: "fitness", parentId: sports.id, image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=3840&q=100" },
   });
 
   console.log("✓ Categories created");
@@ -501,6 +529,68 @@ async function main() {
   }
 
   console.log("✓ Inventory set up");
+
+  // ── Product Images ─────────────────────────────────────────────
+  console.log("\n🖼️  Adding product images...");
+
+  const PRODUCT_IMAGES: Record<string, { url: string; alt: string }[]> = {
+    "iphone-15-pro": [
+      { url: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=3840&q=100", alt: "iPhone 15 Pro titanium finish" },
+      { url: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=3840&q=100", alt: "iPhone 15 Pro side view" },
+    ],
+    "samsung-galaxy-s24-ultra": [
+      { url: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=3840&q=100", alt: "Samsung Galaxy S24 Ultra" },
+      { url: "https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?w=3840&q=100", alt: "Samsung smartphone display" },
+    ],
+    "macbook-pro-14": [
+      { url: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=3840&q=100", alt: "MacBook Pro on desk" },
+      { url: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=3840&q=100", alt: "MacBook Pro keyboard" },
+    ],
+    "airpods-pro-2": [
+      { url: "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=3840&q=100", alt: "AirPods Pro with case" },
+      { url: "https://images.unsplash.com/photo-1588423771073-b8903fead85b?w=3840&q=100", alt: "AirPods Pro earbuds" },
+    ],
+    "sony-wh1000xm5": [
+      { url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=3840&q=100", alt: "Sony WH-1000XM5 headphones" },
+      { url: "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=3840&q=100", alt: "Over-ear headphones" },
+    ],
+    "cotton-crew-tshirt": [
+      { url: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=3840&q=100", alt: "White cotton t-shirt" },
+      { url: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=3840&q=100", alt: "Premium crew neck t-shirt" },
+    ],
+    "summer-floral-dress": [
+      { url: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=3840&q=100", alt: "Summer floral midi dress" },
+      { url: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=3840&q=100", alt: "Floral print dress detail" },
+    ],
+    "ergonomic-office-chair": [
+      { url: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=3840&q=100", alt: "Ergonomic office chair" },
+      { url: "https://images.unsplash.com/photo-1541123437800-1bb1317badc2?w=3840&q=100", alt: "Mesh back office chair" },
+    ],
+    "automatic-espresso-machine": [
+      { url: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=3840&q=100", alt: "Automatic espresso machine" },
+      { url: "https://images.unsplash.com/photo-1510017803434-a899398421b3?w=3840&q=100", alt: "Coffee machine brewing" },
+    ],
+    "wireless-charging-pad": [
+      { url: "https://images.unsplash.com/photo-1583394293214-5bc3d357b5b6?w=3840&q=100", alt: "Wireless charging pad" },
+      { url: "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=3840&q=100", alt: "Phone on wireless charger" },
+    ],
+  };
+
+  for (const [slug, images] of Object.entries(PRODUCT_IMAGES)) {
+    const product = await prisma.product.findUnique({ where: { slug } });
+    if (!product) continue;
+    await prisma.productImage.deleteMany({ where: { productId: product.id } });
+    await prisma.productImage.createMany({
+      data: images.map((img, i) => ({
+        productId: product.id,
+        url: img.url,
+        alt: img.alt,
+        sortOrder: i,
+      })),
+    });
+  }
+
+  console.log("✓ Product images added");
 
   console.log("\n✅ Seed complete!");
   console.log("\n📋 Summary:");

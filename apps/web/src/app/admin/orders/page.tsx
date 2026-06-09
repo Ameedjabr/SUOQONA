@@ -60,13 +60,13 @@ export default function AdminOrders() {
   return (
     <ProtectedRoute requiredRole="ADMIN">
       <AdminLayout currentPage="orders">
-        <div className="p-6 space-y-5 max-w-7xl mx-auto">
+        <div className="p-5 space-y-4 max-w-[1400px] mx-auto">
 
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">Orders</h1>
-              <p className="text-slate-500 text-sm mt-0.5">
+              <h1 className="text-3xl font-bold text-slate-900">Orders</h1>
+              <p className="text-slate-500 text-base mt-1">
                 {total > 0 ? `${total.toLocaleString()} orders total` : "Manage customer orders"}
               </p>
             </div>

@@ -27,14 +27,19 @@ interface AdminLayoutProps {
 }
 
 const navItems = [
-  { href: "/admin", icon: LayoutDashboard, label: "Dashboard", key: "dashboard" },
-  { href: "/admin/products", icon: Package, label: "Products", key: "products" },
-  { href: "/admin/categories", icon: Layers, label: "Categories", key: "categories" },
-  { href: "/admin/orders", icon: ShoppingCart, label: "Orders", key: "orders" },
-  { href: "/admin/customers", icon: Users, label: "Customers", key: "customers" },
-  { href: "/admin/inventory", icon: Warehouse, label: "Inventory", key: "inventory" },
-  { href: "/admin/settings", icon: Settings, label: "Settings", key: "settings" },
+  { href: "/admin",            icon: LayoutDashboard, label: "Dashboard",  key: "dashboard"  },
+  { href: "/admin/products",   icon: Package,         label: "Products",   key: "products"   },
+  { href: "/admin/categories", icon: Layers,          label: "Categories", key: "categories" },
+  { href: "/admin/orders",     icon: ShoppingCart,    label: "Orders",     key: "orders"     },
+  { href: "/admin/customers",  icon: Users,           label: "Customers",  key: "customers"  },
+  { href: "/admin/inventory",  icon: Warehouse,       label: "Inventory",  key: "inventory"  },
+  { href: "/admin/settings",   icon: Settings,        label: "Settings",   key: "settings"   },
 ];
+
+const pageTitles: Record<string, string> = {
+  dashboard: "Dashboard", products: "Products", categories: "Categories",
+  orders: "Orders", customers: "Customers", inventory: "Inventory", settings: "Settings",
+};
 
 export function AdminLayout({ children, currentPage }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -46,53 +51,44 @@ export function AdminLayout({ children, currentPage }: AdminLayoutProps) {
     router.push("/login");
   };
 
-  const pageTitles: Record<string, string> = {
-    dashboard: "Dashboard",
-    products: "Products",
-    categories: "Categories",
-    orders: "Orders",
-    customers: "Customers",
-    inventory: "Inventory",
-    settings: "Settings",
-  };
-
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden">
-      {/* Sidebar */}
+    <div className="flex h-screen bg-[#F7F4EF] overflow-hidden">
+      {/* ── Sidebar ── */}
       <AnimatePresence initial={false}>
         {sidebarOpen && (
           <motion.aside
-            initial={{ x: -280 }}
+            initial={{ x: -272 }}
             animate={{ x: 0 }}
-            exit={{ x: -280 }}
+            exit={{ x: -272 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className="fixed left-0 top-0 z-40 h-screen w-64 flex flex-col"
-            style={{
-              background: "linear-gradient(180deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%)",
-            }}
+            style={{ background: "#0F1F3D" }}
           >
             {/* Logo */}
-            <div className="flex items-center justify-between h-16 px-5 border-b border-indigo-700/50">
+            <div className="flex items-center justify-between h-16 px-5 border-b border-white/10">
               <Link href="/admin" className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-violet-400 to-indigo-400 rounded-lg flex items-center justify-center shadow-lg">
+                <div
+                  className="w-8 h-8 rounded-xl flex items-center justify-center shadow-lg"
+                  style={{ background: "#FF5533" }}
+                >
                   <Store className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <span className="text-white font-bold text-base tracking-tight">Souqona</span>
-                  <p className="text-indigo-300 text-xs">Admin Panel</p>
+                  <span className="text-white font-black text-base tracking-tight">Souqona</span>
+                  <p className="text-white/40 text-[11px]">Admin Panel</p>
                 </div>
               </Link>
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="p-1.5 rounded-lg text-indigo-300 hover:text-white hover:bg-indigo-700/50 transition-colors"
+                className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Nav */}
-            <nav className="flex-1 px-3 py-5 space-y-1 overflow-y-auto">
-              <p className="text-indigo-400 text-xs font-semibold uppercase tracking-widest px-3 mb-3">
+            <nav className="flex-1 px-3 py-5 space-y-0.5 overflow-y-auto">
+              <p className="text-white/30 text-[10px] font-bold uppercase tracking-widest px-3 mb-3">
                 Main Menu
               </p>
               {navItems.map((item) => (
@@ -106,22 +102,25 @@ export function AdminLayout({ children, currentPage }: AdminLayoutProps) {
               ))}
             </nav>
 
-            {/* User Section */}
-            <div className="p-4 border-t border-indigo-700/50">
-              <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-indigo-800/40 mb-2">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-400 to-pink-400 flex items-center justify-center flex-shrink-0">
+            {/* User section */}
+            <div className="p-4 border-t border-white/10">
+              <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/5 mb-2">
+                <div
+                  className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{ background: "#FF5533" }}
+                >
                   <span className="text-white text-sm font-bold">
                     {user?.fullName?.charAt(0)?.toUpperCase() || "A"}
                   </span>
                 </div>
                 <div className="min-w-0">
-                  <p className="text-white text-sm font-medium truncate">{user?.fullName || "Admin"}</p>
-                  <p className="text-indigo-300 text-xs truncate">{user?.email || ""}</p>
+                  <p className="text-white text-sm font-semibold truncate">{user?.fullName || "Admin"}</p>
+                  <p className="text-white/40 text-xs truncate">{user?.email || ""}</p>
                 </div>
               </div>
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-indigo-300 hover:text-white hover:bg-red-500/20 hover:border-red-500/30 border border-transparent transition-all duration-200 text-sm"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/40 hover:text-white hover:bg-red-500/20 border border-transparent hover:border-red-500/20 transition-all duration-200 text-sm"
               >
                 <LogOut className="w-4 h-4" />
                 <span>Sign Out</span>
@@ -131,51 +130,47 @@ export function AdminLayout({ children, currentPage }: AdminLayoutProps) {
         )}
       </AnimatePresence>
 
-      {/* Main Content */}
+      {/* ── Main ── */}
       <motion.main
         animate={{ marginLeft: sidebarOpen ? 256 : 0 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         className="flex-1 flex flex-col min-w-0"
       >
         {/* Topbar */}
-        <div className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 flex-shrink-0 shadow-sm">
+        <div className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 flex-shrink-0 shadow-sm">
           <div className="flex items-center gap-4">
             {!sidebarOpen && (
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+                className="p-2 rounded-lg text-gray-500 hover:text-[#0F1F3D] hover:bg-gray-100 transition-colors"
               >
                 <Menu className="w-5 h-5" />
               </button>
             )}
-            {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-sm">
-              <Link href="/admin" className="text-slate-400 hover:text-slate-600 transition-colors">
+              <Link href="/admin" className="text-gray-400 hover:text-[#0F1F3D] transition-colors font-medium">
                 Admin
               </Link>
-              {currentPage && currentPage !== "dashboard" && (
+              {currentPage && (
                 <>
-                  <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-                  <span className="text-slate-900 font-semibold capitalize">
+                  <ChevronRight className="w-3.5 h-3.5 text-gray-300" />
+                  <span className="text-[#0F1F3D] font-bold capitalize">
                     {pageTitles[currentPage] || currentPage}
                   </span>
-                </>
-              )}
-              {currentPage === "dashboard" && (
-                <>
-                  <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-                  <span className="text-slate-900 font-semibold">Dashboard</span>
                 </>
               )}
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <button className="relative p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+            <button className="relative p-2 rounded-lg text-gray-400 hover:text-[#0F1F3D] hover:bg-gray-100 transition-colors">
               <Bell className="w-5 h-5" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#FF5533] rounded-full" />
             </button>
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center cursor-pointer">
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer"
+              style={{ background: "#FF5533" }}
+            >
               <span className="text-white text-sm font-bold">
                 {user?.fullName?.charAt(0)?.toUpperCase() || "A"}
               </span>
@@ -183,7 +178,7 @@ export function AdminLayout({ children, currentPage }: AdminLayoutProps) {
           </div>
         </div>
 
-        {/* Page Content */}
+        {/* Page content */}
         <div className="flex-1 overflow-auto">
           <motion.div
             initial={{ opacity: 0, y: 8 }}
@@ -210,27 +205,28 @@ function SidebarLink({ href, Icon, label, active }: SidebarLinkProps) {
   return (
     <Link href={href}>
       <motion.div
-        whileHover={{ x: 4 }}
+        whileHover={{ x: 3 }}
         transition={{ type: "spring", stiffness: 400, damping: 25 }}
-        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 cursor-pointer group ${
-          active
-            ? "bg-white/15 text-white shadow-sm"
-            : "text-indigo-300 hover:bg-white/10 hover:text-white"
+        className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 cursor-pointer group ${
+          active ? "bg-white/12 text-white" : "text-white/50 hover:bg-white/8 hover:text-white"
         }`}
       >
+        {/* Active left accent bar */}
         {active && (
-          <motion.div
-            layoutId="activeIndicator"
-            className="absolute left-0 w-1 h-8 bg-violet-400 rounded-r-full"
+          <span
+            className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full"
+            style={{ background: "#FF5533" }}
           />
         )}
         <Icon
-          className={`w-5 h-5 flex-shrink-0 transition-colors ${
-            active ? "text-violet-300" : "text-indigo-400 group-hover:text-indigo-200"
+          className={`w-[18px] h-[18px] flex-shrink-0 transition-colors ${
+            active ? "text-[#FF5533]" : "text-white/40 group-hover:text-white/70"
           }`}
         />
         <span className="text-sm font-medium">{label}</span>
-        {active && <ChevronRight className="w-3.5 h-3.5 ml-auto text-violet-300 opacity-60" />}
+        {active && (
+          <ChevronRight className="w-3.5 h-3.5 ml-auto opacity-50" style={{ color: "#FF5533" }} />
+        )}
       </motion.div>
     </Link>
   );

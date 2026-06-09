@@ -9,8 +9,11 @@ import { orderApi } from "@/services/api";
 import { useAuth } from "@/providers/AuthProvider";
 import { useProtectedRoute } from "@/hooks/useProtectedRoute";
 import ChatWidget from "@/components/ChatWidget";
+import { useTranslation } from "react-i18next";
+import "@/i18n";
 
 export default function OrderDetail() {
+  const { t } = useTranslation();
   const params = useParams();
   const orderId = params?.id as string;
   const router = useRouter();
@@ -45,7 +48,7 @@ export default function OrderDetail() {
       <div className="min-h-screen bg-gray-50 flex flex-col">
         <Header />
         <div className="flex-1 flex items-center justify-center">
-          <Loader label="Loading order..." />
+          <Loader label={t("orders.detail.loading")} />
         </div>
         <Footer />
       </div>
@@ -59,8 +62,8 @@ export default function OrderDetail() {
         <div className="flex-1 flex items-center justify-center">
           <Card className="max-w-md">
             <div className="text-center">
-              <h2 className="text-xl font-bold text-gray-900 mb-2">Order not found</h2>
-              <Button onClick={() => router.push("/account/orders")}>Back to Orders</Button>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">{t("orders.detail.notFound")}</h2>
+              <Button onClick={() => router.push("/account/orders")}>{t("orders.detail.backToOrders")}</Button>
             </div>
           </Card>
         </div>
@@ -87,11 +90,11 @@ export default function OrderDetail() {
       <main className="flex-1">
         <div className="max-w-4xl mx-auto px-4 py-8">
           <Button variant="ghost" onClick={() => router.back()} className="mb-6">
-            ← Back
+            {t("orders.detail.back")}
           </Button>
 
           <div className="mb-6">
-            <h1 className="text-4xl font-bold text-gray-900">Order {order.orderNumber}</h1>
+            <h1 className="text-4xl font-bold text-gray-900">{t("orders.detail.order")} {order.orderNumber}</h1>
             <p className="text-gray-600 mt-2">
               {new Date(order.createdAt).toLocaleDateString("en-US", {
                 year: "numeric",
@@ -104,15 +107,15 @@ export default function OrderDetail() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <Card>
               <div>
-                <p className="text-gray-600 text-sm">Status</p>
+                <p className="text-gray-600 text-sm">{t("orders.detail.status")}</p>
                 <Badge variant={getStatusBadgeVariant(order.status)} className="mt-2">
-                  {order.status}
+                  {t(`orders.status.${order.status}`, { defaultValue: order.status })}
                 </Badge>
               </div>
             </Card>
             <Card>
               <div>
-                <p className="text-gray-600 text-sm">Payment</p>
+                <p className="text-gray-600 text-sm">{t("orders.detail.payment")}</p>
                 <Badge
                   variant={order.paymentStatus === "COLLECTED" ? "success" : "warning"}
                   className="mt-2"
@@ -123,7 +126,7 @@ export default function OrderDetail() {
             </Card>
             <Card>
               <div>
-                <p className="text-gray-600 text-sm">Total</p>
+                <p className="text-gray-600 text-sm">{t("orders.detail.total")}</p>
                 <p className="text-2xl font-bold text-indigo-600 mt-1">
                   ₪{(order.totalCents / 100).toFixed(2)}
                 </p>
@@ -132,7 +135,7 @@ export default function OrderDetail() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <Card title="Shipping Address">
+            <Card title={t("orders.detail.shippingAddress")}>
               <div className="text-sm space-y-1">
                 <p className="font-semibold text-gray-900">{order.customerName}</p>
                 <p className="text-gray-700">{order.addressLine1}</p>
@@ -145,24 +148,23 @@ export default function OrderDetail() {
               </div>
             </Card>
 
-            <Card title="Payment Method">
+            <Card title={t("orders.detail.paymentMethod")}>
               <p className="text-lg font-semibold text-gray-900">{order.paymentMethod}</p>
               <p className="text-gray-600 text-sm mt-2">
-                {order.paymentMethod === "COD" &&
-                  "Payment will be collected upon delivery"}
+                {order.paymentMethod === "COD" && t("orders.detail.codDelivery")}
               </p>
             </Card>
           </div>
 
-          <Card title="Order Items">
+          <Card title={t("orders.detail.orderItems")}>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
                 <thead className="bg-gray-50 border-b">
                   <tr>
-                    <th className="px-4 py-2 font-semibold text-gray-700">Product</th>
-                    <th className="px-4 py-2 font-semibold text-gray-700 text-right">Qty</th>
-                    <th className="px-4 py-2 font-semibold text-gray-700 text-right">Price</th>
-                    <th className="px-4 py-2 font-semibold text-gray-700 text-right">Total</th>
+                    <th className="px-4 py-2 font-semibold text-gray-700">{t("orders.detail.product")}</th>
+                    <th className="px-4 py-2 font-semibold text-gray-700 text-right">{t("orders.detail.qty")}</th>
+                    <th className="px-4 py-2 font-semibold text-gray-700 text-right">{t("orders.detail.price")}</th>
+                    <th className="px-4 py-2 font-semibold text-gray-700 text-right">{t("orders.detail.total")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -184,29 +186,29 @@ export default function OrderDetail() {
 
             <div className="mt-6 space-y-2 text-sm border-t border-gray-200 pt-4">
               <div className="flex justify-between">
-                <span className="text-gray-600">Subtotal</span>
+                <span className="text-gray-600">{t("orders.detail.subtotal")}</span>
                 <span>₪{(order.subtotalCents / 100).toFixed(2)}</span>
               </div>
               {order.discountCents > 0 && (
                 <div className="flex justify-between text-green-600">
-                  <span>Discount</span>
+                  <span>{t("orders.detail.discount")}</span>
                   <span>-₪{(order.discountCents / 100).toFixed(2)}</span>
                 </div>
               )}
               {order.shippingCents > 0 && (
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Shipping</span>
+                  <span className="text-gray-600">{t("orders.detail.shipping")}</span>
                   <span>₪{(order.shippingCents / 100).toFixed(2)}</span>
                 </div>
               )}
               {order.taxCents > 0 && (
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Tax</span>
+                  <span className="text-gray-600">{t("orders.detail.tax")}</span>
                   <span>₪{(order.taxCents / 100).toFixed(2)}</span>
                 </div>
               )}
               <div className="border-t border-gray-200 pt-2 flex justify-between font-semibold">
-                <span>Total</span>
+                <span>{t("orders.detail.total")}</span>
                 <span className="text-indigo-600">₪{(order.totalCents / 100).toFixed(2)}</span>
               </div>
             </div>

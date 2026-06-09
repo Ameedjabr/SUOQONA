@@ -5,6 +5,14 @@
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
+// Fix image URLs stored in DB with localhost so they work from any device
+function fixUrls<T>(data: T): T {
+  if (!data || API_URL === "http://localhost:3001") return data;
+  const json = JSON.stringify(data);
+  const fixed = json.replace(/http:\/\/localhost:3001/g, API_URL);
+  return JSON.parse(fixed);
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data: T | null;
@@ -17,6 +25,9 @@ export interface PaginationParams {
   search?: string;
   sort?: string;
   status?: string;
+  categorySlug?: string;
+  minPrice?: number;
+  maxPrice?: number;
 }
 
 export class ApiError extends Error {
@@ -37,7 +48,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
     throw new ApiError(response.status, data.error || "API Error", data);
   }
 
-  return data.data || data;
+  return fixUrls(data.data || data);
 }
 
 // ──── Auth Endpoints ────────────────────────────
@@ -148,6 +159,9 @@ export const productApi = {
     if (params.limit) query.append("limit", params.limit.toString());
     if (params.search) query.append("q", params.search);
     if (params.sort) query.append("sort", params.sort);
+    if (params.categorySlug) query.append("category", params.categorySlug);
+    if (params.minPrice != null) query.append("minPrice", params.minPrice.toString());
+    if (params.maxPrice != null) query.append("maxPrice", params.maxPrice.toString());
 
     const response = await fetch(`${API_URL}/api/products?${query}`, {
       headers: { "Content-Type": "application/json" },
@@ -194,10 +208,20 @@ export const productApi = {
 
   // Admin: fetch all statuses by making parallel requests
   searchAll: async (params: Omit<PaginationParams, "status"> = {}) => {
+    const buildQuery = (status?: string) => {
+      const q = new URLSearchParams({ page: "1", limit: "500" });
+      if (status) q.append("status", status);
+      if (params.search) q.append("q", params.search);
+      if (params.sort) q.append("sort", params.sort);
+      if (params.categorySlug) q.append("category", params.categorySlug);
+      if (params.minPrice != null) q.append("minPrice", params.minPrice.toString());
+      if (params.maxPrice != null) q.append("maxPrice", params.maxPrice.toString());
+      return q;
+    };
     const [r1, r2, r3] = await Promise.all([
-      fetch(`${API_URL}/api/products?${new URLSearchParams({ ...params, page: "1", limit: "500" } as Record<string, string>)}`).then(r => r.json()),
-      fetch(`${API_URL}/api/products?${new URLSearchParams({ ...params, page: "1", limit: "500", status: "DRAFT" } as Record<string, string>)}`).then(r => r.json()),
-      fetch(`${API_URL}/api/products?${new URLSearchParams({ ...params, page: "1", limit: "500", status: "ARCHIVED" } as Record<string, string>)}`).then(r => r.json()),
+      fetch(`${API_URL}/api/products?${buildQuery()}`).then(r => r.json()),
+      fetch(`${API_URL}/api/products?${buildQuery("DRAFT")}`).then(r => r.json()),
+      fetch(`${API_URL}/api/products?${buildQuery("ARCHIVED")}`).then(r => r.json()),
     ]);
     const active = (r1.data || r1)?.products || [];
     const draft = (r2.data || r2)?.products || [];
@@ -221,6 +245,7 @@ export interface Category {
   id: string;
   name: string;
   slug: string;
+  image?: string | null;
   parentId: string | null;
   children?: Category[];
   createdAt: string;

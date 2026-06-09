@@ -98,7 +98,7 @@ export default function AdminProducts() {
   return (
     <ProtectedRoute requiredRole="ADMIN">
       <AdminLayout currentPage="products">
-        <div className="p-6 space-y-5 max-w-7xl mx-auto">
+        <div className="p-5 space-y-4 max-w-[1400px] mx-auto">
 
           {/* Toast */}
           <AnimatePresence>
@@ -121,8 +121,8 @@ export default function AdminProducts() {
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">Products</h1>
-              <p className="text-slate-500 text-sm mt-0.5">Manage your store catalog</p>
+              <h1 className="text-3xl font-bold text-slate-900">Products</h1>
+              <p className="text-slate-500 text-base mt-1">Manage your store catalog</p>
             </div>
             <Link href="/admin/products/new">
               <button className="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm">
@@ -140,9 +140,9 @@ export default function AdminProducts() {
               { label: "Draft", value: stats.draft, color: "text-amber-600" },
               { label: "Archived", value: stats.archived, color: "text-slate-400" },
             ].map((s) => (
-              <div key={s.label} className="bg-white rounded-xl border border-slate-200 px-4 py-3">
+              <div key={s.label} className="bg-white rounded-xl border border-slate-200 px-4 py-3 hover:shadow-md hover:scale-[1.02] transition-all duration-200">
                 <p className="text-xs text-slate-400 font-medium">{s.label}</p>
-                <p className={`text-xl font-bold mt-0.5 ${s.color}`}>{s.value}</p>
+                <p className={`text-2xl font-bold mt-0.5 ${s.color}`}>{s.value}</p>
               </div>
             ))}
           </div>
@@ -235,8 +235,16 @@ export default function AdminProducts() {
                         >
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-9 h-9 bg-slate-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                                <Package className="w-4 h-4 text-slate-400" />
+                              <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                {product.images?.[0]?.url ? (
+                                  <img
+                                    src={product.images[0].url}
+                                    alt={product.images[0].alt || product.title}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <Package className="w-4 h-4 text-slate-400" />
+                                )}
                               </div>
                               <div>
                                 <p className="font-semibold text-slate-900">{product.title}</p>
