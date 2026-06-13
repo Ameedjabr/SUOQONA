@@ -159,6 +159,7 @@ export const productApi = {
     if (params.limit) query.append("limit", params.limit.toString());
     if (params.search) query.append("q", params.search);
     if (params.sort) query.append("sort", params.sort);
+    if (params.status) query.append("status", params.status);
     if (params.categorySlug) query.append("category", params.categorySlug);
     if (params.minPrice != null) query.append("minPrice", params.minPrice.toString());
     if (params.maxPrice != null) query.append("maxPrice", params.maxPrice.toString());
