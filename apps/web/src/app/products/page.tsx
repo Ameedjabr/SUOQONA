@@ -44,82 +44,27 @@ function SkeletonCard() {
   );
 }
 
-/* ─── Main page ─────────────────────────────────────────────────── */
-export default function ProductsPage() {
-  const { t } = useTranslation();
-  const [products, setProducts]     = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoading, setIsLoading]   = useState(true);
-  const [error, setError]           = useState<string | null>(null);
-  const [total, setTotal]           = useState(0);
+/* ─── Filter panel (outside ProductsPage to prevent focus loss) ── */
+interface FilterPanelProps {
+  search: string; setSearch: (v: string) => void;
+  sort: string; setSort: (v: string) => void;
+  categories: Category[];
+  categorySlug: string; setCategorySlug: (v: string) => void;
+  expandedCategorySlug: string; setExpandedCategorySlug: (v: string) => void;
+  pricePreset: number | null; setPricePreset: (v: number | null) => void;
+  minPriceInput: string; setMinPriceInput: (v: string) => void;
+  maxPriceInput: string; setMaxPriceInput: (v: string) => void;
+  setPage: (v: number) => void;
+  t: (key: string, opts?: any) => string;
+}
 
-  // Filters
-  const [search, setSearch]               = useState("");
-  const [sort, setSort]                   = useState("newest");
-  const [categorySlug, setCategorySlug]       = useState("");
-  const [expandedCategorySlug, setExpandedCategorySlug] = useState("");
-  const [pricePreset, setPricePreset]     = useState<number | null>(null); // index into PRICE_PRESETS
-  const [minPriceInput, setMinPriceInput] = useState("");
-  const [maxPriceInput, setMaxPriceInput] = useState("");
-  const [page, setPage]                   = useState(1);
-  const [totalPages, setTotalPages]       = useState(1);
-  const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
-
-  // Load root categories once
-  useEffect(() => {
-    categoryApi.getAll()
-      .then((d) => setCategories(Array.isArray(d) ? d : []))
-      .catch(() => {});
-  }, []);
-
-  // Derive minPrice / maxPrice in cents
-  const minCents = pricePreset !== null
-    ? PRICE_PRESETS_CFG[pricePreset].min * 100
-    : minPriceInput ? parseFloat(minPriceInput) * 100 : undefined;
-  const maxCents = pricePreset !== null
-    ? PRICE_PRESETS_CFG[pricePreset].max * 100
-    : maxPriceInput ? parseFloat(maxPriceInput) * 100 : undefined;
-
-  const loadProducts = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const result = await productApi.search({
-        page,
-        limit: 12,
-        search: search || undefined,
-        sort,
-        categorySlug: categorySlug || undefined,
-        minPrice: minCents,
-        maxPrice: maxCents,
-      });
-      setProducts(result.products || []);
-      setTotalPages(result.pages || 1);
-      setTotal(result.total ?? result.products?.length ?? 0);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load products");
-    } finally {
-      setIsLoading(false);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, search, sort, categorySlug, minCents, maxCents]);
-
-  useEffect(() => { loadProducts(); }, [loadProducts]);
-
-  // Count active filters
-  const activeFilterCount = [
-    categorySlug,
-    pricePreset !== null || minPriceInput || maxPriceInput,
-    search,
-  ].filter(Boolean).length;
-
-  const clearAll = () => {
-    setSearch(""); setCategorySlug(""); setExpandedCategorySlug("");
-    setPricePreset(null); setMinPriceInput(""); setMaxPriceInput(""); setPage(1);
-  };
-
-  /* ── Filter sidebar content (shared for desktop + mobile) ────── */
-  const FilterPanel = () => (
+function FilterPanel({
+  search, setSearch, sort, setSort, categories,
+  categorySlug, setCategorySlug, expandedCategorySlug, setExpandedCategorySlug,
+  pricePreset, setPricePreset, minPriceInput, setMinPriceInput,
+  maxPriceInput, setMaxPriceInput, setPage, t,
+}: FilterPanelProps) {
+  return (
     <div className="space-y-7">
 
       {/* Search */}
@@ -284,6 +229,82 @@ export default function ProductsPage() {
 
     </div>
   );
+}
+
+/* ─── Main page ─────────────────────────────────────────────────── */
+export default function ProductsPage() {
+  const { t } = useTranslation();
+  const [products, setProducts]     = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isLoading, setIsLoading]   = useState(true);
+  const [error, setError]           = useState<string | null>(null);
+  const [total, setTotal]           = useState(0);
+
+  // Filters
+  const [search, setSearch]               = useState("");
+  const [sort, setSort]                   = useState("newest");
+  const [categorySlug, setCategorySlug]       = useState("");
+  const [expandedCategorySlug, setExpandedCategorySlug] = useState("");
+  const [pricePreset, setPricePreset]     = useState<number | null>(null); // index into PRICE_PRESETS
+  const [minPriceInput, setMinPriceInput] = useState("");
+  const [maxPriceInput, setMaxPriceInput] = useState("");
+  const [page, setPage]                   = useState(1);
+  const [totalPages, setTotalPages]       = useState(1);
+  const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+
+  // Load root categories once
+  useEffect(() => {
+    categoryApi.getAll()
+      .then((d) => setCategories(Array.isArray(d) ? d : []))
+      .catch(() => {});
+  }, []);
+
+  // Derive minPrice / maxPrice in cents
+  const minCents = pricePreset !== null
+    ? PRICE_PRESETS_CFG[pricePreset].min * 100
+    : minPriceInput ? parseFloat(minPriceInput) * 100 : undefined;
+  const maxCents = pricePreset !== null
+    ? PRICE_PRESETS_CFG[pricePreset].max * 100
+    : maxPriceInput ? parseFloat(maxPriceInput) * 100 : undefined;
+
+  const loadProducts = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const result = await productApi.search({
+        page,
+        limit: 12,
+        search: search || undefined,
+        sort,
+        categorySlug: categorySlug || undefined,
+        minPrice: minCents,
+        maxPrice: maxCents,
+      });
+      setProducts(result.products || []);
+      setTotalPages(result.pages || 1);
+      setTotal(result.total ?? result.products?.length ?? 0);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load products");
+    } finally {
+      setIsLoading(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, search, sort, categorySlug, minCents, maxCents]);
+
+  useEffect(() => { loadProducts(); }, [loadProducts]);
+
+  // Count active filters
+  const activeFilterCount = [
+    categorySlug,
+    pricePreset !== null || minPriceInput || maxPriceInput,
+    search,
+  ].filter(Boolean).length;
+
+  const clearAll = () => {
+    setSearch(""); setCategorySlug(""); setExpandedCategorySlug("");
+    setPricePreset(null); setMinPriceInput(""); setMaxPriceInput(""); setPage(1);
+  };
+
 
   return (
     <div className="min-h-screen bg-[#F7F4EF] flex flex-col">
@@ -370,7 +391,17 @@ export default function ProductsPage() {
                   </button>
                 )}
               </div>
-              <FilterPanel />
+              <FilterPanel
+                search={search} setSearch={setSearch}
+                sort={sort} setSort={setSort}
+                categories={categories}
+                categorySlug={categorySlug} setCategorySlug={setCategorySlug}
+                expandedCategorySlug={expandedCategorySlug} setExpandedCategorySlug={setExpandedCategorySlug}
+                pricePreset={pricePreset} setPricePreset={setPricePreset}
+                minPriceInput={minPriceInput} setMinPriceInput={setMinPriceInput}
+                maxPriceInput={maxPriceInput} setMaxPriceInput={setMaxPriceInput}
+                setPage={setPage} t={t}
+              />
             </div>
           </aside>
 
@@ -417,7 +448,17 @@ export default function ProductsPage() {
                       </button>
                     </div>
                   </div>
-                  <FilterPanel />
+                  <FilterPanel
+                search={search} setSearch={setSearch}
+                sort={sort} setSort={setSort}
+                categories={categories}
+                categorySlug={categorySlug} setCategorySlug={setCategorySlug}
+                expandedCategorySlug={expandedCategorySlug} setExpandedCategorySlug={setExpandedCategorySlug}
+                pricePreset={pricePreset} setPricePreset={setPricePreset}
+                minPriceInput={minPriceInput} setMinPriceInput={setMinPriceInput}
+                maxPriceInput={maxPriceInput} setMaxPriceInput={setMaxPriceInput}
+                setPage={setPage} t={t}
+              />
                 </motion.div>
               </>
             )}

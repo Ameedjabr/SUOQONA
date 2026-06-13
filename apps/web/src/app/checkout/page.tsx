@@ -8,8 +8,18 @@ import { Card, Button, Input, Toast, Loader } from "@/components/ui";
 import { cartApi, orderApi, addressApi, Address } from "@/services/api";
 import { useAuth } from "@/providers/AuthProvider";
 import ChatWidget from "@/components/ChatWidget";
+import { Banknote, CreditCard, Lock, ShieldCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import "@/i18n";
+
+function formatCardNumber(value: string) {
+  return value.replace(/\D/g, "").slice(0, 16).replace(/(.{4})/g, "$1 ").trim();
+}
+function formatExpiry(value: string) {
+  const digits = value.replace(/\D/g, "").slice(0, 4);
+  if (digits.length >= 3) return digits.slice(0, 2) + "/" + digits.slice(2);
+  return digits;
+}
 
 export default function CheckoutPage() {
   const { t } = useTranslation();
@@ -35,6 +45,13 @@ export default function CheckoutPage() {
     postalCode: "",
     paymentMethod: "COD",
     deliveryNotes: "",
+  });
+
+  const [cardData, setCardData] = useState({
+    cardholderName: "",
+    cardNumber: "",
+    expiry: "",
+    cvv: "",
   });
 
   const [selectedAddressId, setSelectedAddressId] = useState<string>("");
@@ -80,8 +97,22 @@ export default function CheckoutPage() {
     }
   };
 
+  const isCardValid = () => {
+    if (formData.paymentMethod !== "VISA") return true;
+    return (
+      cardData.cardholderName.trim().length > 2 &&
+      cardData.cardNumber.replace(/\s/g, "").length === 16 &&
+      cardData.expiry.length === 5 &&
+      cardData.cvv.length >= 3
+    );
+  };
+
   const handlePlaceOrder = async () => {
     if (!accessToken || !cart) return;
+    if (!isCardValid()) {
+      setError("Please fill in all card details correctly.");
+      return;
+    }
     setIsSubmitting(true);
     try {
       const orderData = {
@@ -100,9 +131,7 @@ export default function CheckoutPage() {
 
       const order = await orderApi.checkout(accessToken, orderData);
       setSuccess(t("checkout.orderSuccess"));
-
       await cartApi.getCart(accessToken);
-
       setTimeout(() => {
         router.push(`/order-confirmation/${order.id}`);
       }, 1500);
@@ -152,26 +181,32 @@ export default function CheckoutPage() {
   const total = subtotal + tax + shipping;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-[#F7F4EF] flex flex-col">
       <Header />
 
       <main className="flex-1">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-8">{t("checkout.title")}</h1>
+        <div style={{ background: "#0F1F3D" }} className="border-b border-white/10">
+          <div className="max-w-6xl mx-auto px-6 py-10">
+            <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "rgba(255,255,255,0.4)" }}>Step 2 of 2</p>
+            <h1 className="text-3xl sm:text-4xl font-black text-white">{t("checkout.title")}</h1>
+          </div>
+        </div>
 
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
           {error && <Toast type="error" message={error} onClose={() => setError(null)} />}
           {success && <Toast type="success" message={success} onClose={() => setSuccess(null)} />}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Checkout Form */}
-            <div className="lg:col-span-2">
-              <Card title={t("checkout.shippingAddress")}>
+            {/* Left column */}
+            <div className="lg:col-span-2 space-y-6">
+
+              {/* Shipping address */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h2 className="text-lg font-black text-[#0F1F3D] mb-5">{t("checkout.shippingAddress")}</h2>
                 <div className="space-y-4">
                   {savedAddresses.length > 0 && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        {t("checkout.savedAddresses")}
-                      </label>
+                      <label className="block text-sm font-semibold text-gray-600 mb-2">{t("checkout.savedAddresses")}</label>
                       <select
                         value={selectedAddressId}
                         onChange={(e) => {
@@ -191,147 +226,304 @@ export default function CheckoutPage() {
                             }));
                           }
                         }}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 text-sm"
+                        style={{ "--tw-ring-color": "#FF5533" } as any}
                       >
                         <option value="">{t("checkout.selectAddress")}</option>
                         {savedAddresses.map((addr) => (
                           <option key={addr.id} value={addr.id}>
-                            {addr.label || addr.fullName} - {addr.addressLine1}
+                            {addr.label || addr.fullName} — {addr.addressLine1}
                           </option>
                         ))}
                       </select>
                     </div>
                   )}
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <Input
-                      label={t("checkout.fields.fullName")}
-                      value={formData.fullName}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, fullName: e.target.value }))}
-                    />
-                    <Input
-                      label={t("checkout.fields.email")}
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <Input label={t("checkout.fields.fullName")} value={formData.fullName}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, fullName: e.target.value }))} />
+                    <Input label={t("checkout.fields.email")} type="email" value={formData.email}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))} />
                   </div>
 
-                  <Input
-                    label={t("checkout.fields.phone")}
-                    value={formData.phonePrimary}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, phonePrimary: e.target.value }))}
-                  />
+                  <Input label={t("checkout.fields.phone")} value={formData.phonePrimary}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, phonePrimary: e.target.value }))} />
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <Input
-                      label={t("checkout.fields.country")}
-                      value={formData.country}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, country: e.target.value }))}
-                    />
-                    <Input
-                      label={t("checkout.fields.city")}
-                      value={formData.city}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, city: e.target.value }))}
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <Input label={t("checkout.fields.country")} value={formData.country}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, country: e.target.value }))} />
+                    <Input label={t("checkout.fields.city")} value={formData.city}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, city: e.target.value }))} />
                   </div>
 
-                  <Input
-                    label={t("checkout.fields.address1")}
-                    value={formData.addressLine1}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, addressLine1: e.target.value }))}
-                  />
+                  <Input label={t("checkout.fields.address1")} value={formData.addressLine1}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, addressLine1: e.target.value }))} />
+                  <Input label={t("checkout.fields.address2")} value={formData.addressLine2}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, addressLine2: e.target.value }))} />
 
-                  <Input
-                    label={t("checkout.fields.address2")}
-                    value={formData.addressLine2}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, addressLine2: e.target.value }))}
-                  />
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <Input
-                      label={t("checkout.fields.area")}
-                      value={formData.area}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, area: e.target.value }))}
-                    />
-                    <Input
-                      label={t("checkout.fields.postalCode")}
-                      value={formData.postalCode}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, postalCode: e.target.value }))}
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <Input label={t("checkout.fields.area")} value={formData.area}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, area: e.target.value }))} />
+                    <Input label={t("checkout.fields.postalCode")} value={formData.postalCode}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, postalCode: e.target.value }))} />
                   </div>
 
-                  <Input
-                    label={t("checkout.fields.deliveryNotes")}
-                    value={formData.deliveryNotes}
+                  <Input label={t("checkout.fields.deliveryNotes")} value={formData.deliveryNotes}
                     onChange={(e) => setFormData((prev) => ({ ...prev, deliveryNotes: e.target.value }))}
-                    placeholder={t("checkout.fields.deliveryNotesPlaceholder")}
-                  />
+                    placeholder={t("checkout.fields.deliveryNotesPlaceholder")} />
                 </div>
-              </Card>
+              </div>
 
-              <Card title={t("checkout.paymentMethod")} className="mt-6">
+              {/* Payment method */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h2 className="text-lg font-black text-[#0F1F3D] mb-5">{t("checkout.paymentMethod")}</h2>
+
                 <div className="space-y-3">
-                  <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
-                    <input
-                      type="radio"
-                      name="payment"
-                      value="COD"
+                  {/* Cash on Delivery */}
+                  <label
+                    className="flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all"
+                    style={{
+                      borderColor: formData.paymentMethod === "COD" ? "#FF5533" : "#E5E7EB",
+                      background: formData.paymentMethod === "COD" ? "#FFF5F3" : "white",
+                    }}
+                  >
+                    <input type="radio" name="payment" value="COD" className="sr-only"
                       checked={formData.paymentMethod === "COD"}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, paymentMethod: e.target.value }))}
-                    />
-                    <div>
-                      <p className="font-medium text-gray-900">{t("checkout.cod")}</p>
-                      <p className="text-sm text-gray-600">{t("checkout.codDesc")}</p>
+                      onChange={() => setFormData((prev) => ({ ...prev, paymentMethod: "COD" }))} />
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                      style={{ background: formData.paymentMethod === "COD" ? "#FF5533" : "#F3F4F6" }}
+                    >
+                      <Banknote className="w-5 h-5" style={{ color: formData.paymentMethod === "COD" ? "white" : "#9CA3AF" }} />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-bold text-[#0F1F3D]">{t("checkout.cod")}</p>
+                      <p className="text-sm text-gray-500">{t("checkout.codDesc")}</p>
+                    </div>
+                    <div
+                      className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0"
+                      style={{ borderColor: formData.paymentMethod === "COD" ? "#FF5533" : "#D1D5DB" }}
+                    >
+                      {formData.paymentMethod === "COD" && (
+                        <div className="w-2.5 h-2.5 rounded-full" style={{ background: "#FF5533" }} />
+                      )}
+                    </div>
+                  </label>
+
+                  {/* Visa Card */}
+                  <label
+                    className="flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all"
+                    style={{
+                      borderColor: formData.paymentMethod === "VISA" ? "#FF5533" : "#E5E7EB",
+                      background: formData.paymentMethod === "VISA" ? "#FFF5F3" : "white",
+                    }}
+                  >
+                    <input type="radio" name="payment" value="VISA" className="sr-only"
+                      checked={formData.paymentMethod === "VISA"}
+                      onChange={() => setFormData((prev) => ({ ...prev, paymentMethod: "VISA" }))} />
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                      style={{ background: formData.paymentMethod === "VISA" ? "#FF5533" : "#F3F4F6" }}
+                    >
+                      <CreditCard className="w-5 h-5" style={{ color: formData.paymentMethod === "VISA" ? "white" : "#9CA3AF" }} />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="font-bold text-[#0F1F3D]">Credit / Debit Card</p>
+                        <div className="flex gap-1">
+                          <span className="text-xs font-bold px-1.5 py-0.5 rounded" style={{ background: "#1A1F71", color: "white" }}>VISA</span>
+                          <span className="text-xs font-bold px-1.5 py-0.5 rounded" style={{ background: "#EB001B", color: "white" }}>MC</span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-500">Pay securely with your card</p>
+                    </div>
+                    <div
+                      className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0"
+                      style={{ borderColor: formData.paymentMethod === "VISA" ? "#FF5533" : "#D1D5DB" }}
+                    >
+                      {formData.paymentMethod === "VISA" && (
+                        <div className="w-2.5 h-2.5 rounded-full" style={{ background: "#FF5533" }} />
+                      )}
                     </div>
                   </label>
                 </div>
-              </Card>
+
+                {/* Card form */}
+                {formData.paymentMethod === "VISA" && (
+                  <div className="mt-5 p-5 rounded-xl border border-gray-100" style={{ background: "#F9FAFB" }}>
+                    {/* Card preview */}
+                    <div
+                      className="relative rounded-2xl p-5 mb-5 overflow-hidden"
+                      style={{
+                        background: "linear-gradient(135deg, #0F1F3D 0%, #1a3a6b 60%, #FF5533 140%)",
+                        minHeight: 140,
+                      }}
+                    >
+                      <div className="absolute top-0 right-0 w-40 h-40 rounded-full opacity-10" style={{ background: "white", transform: "translate(30%, -30%)" }} />
+                      <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full opacity-10" style={{ background: "white", transform: "translate(-20%, 30%)" }} />
+                      <div className="relative">
+                        <div className="flex justify-between items-start mb-4">
+                          <div className="w-10 h-7 rounded-sm" style={{ background: "linear-gradient(135deg, #FFD700, #FFA500)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.2)" }} />
+                          <span className="text-white font-black text-lg tracking-widest">VISA</span>
+                        </div>
+                        <p className="text-white font-mono text-base tracking-widest mb-3">
+                          {cardData.cardNumber
+                            ? cardData.cardNumber.padEnd(19, " ").replace(/(.{5})/g, (m, p) => p.slice(0, 4) + " ").trim().replace(/\d(?=.{5})/g, "•")
+                            : "•••• •••• •••• ••••"}
+                        </p>
+                        <div className="flex justify-between items-end">
+                          <div>
+                            <p className="text-white/40 text-xs uppercase tracking-widest mb-0.5">Cardholder</p>
+                            <p className="text-white font-bold text-sm uppercase tracking-wider">
+                              {cardData.cardholderName || "YOUR NAME"}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-white/40 text-xs uppercase tracking-widest mb-0.5">Expires</p>
+                            <p className="text-white font-bold text-sm">{cardData.expiry || "MM/YY"}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Cardholder Name</label>
+                        <input
+                          type="text"
+                          placeholder="Name as on card"
+                          value={cardData.cardholderName}
+                          onChange={(e) => setCardData((prev) => ({ ...prev, cardholderName: e.target.value.toUpperCase() }))}
+                          className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#FF5533] bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Card Number</label>
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          placeholder="1234 5678 9012 3456"
+                          value={cardData.cardNumber}
+                          onChange={(e) => setCardData((prev) => ({ ...prev, cardNumber: formatCardNumber(e.target.value) }))}
+                          className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#FF5533] bg-white"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Expiry Date</label>
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            placeholder="MM/YY"
+                            value={cardData.expiry}
+                            onChange={(e) => setCardData((prev) => ({ ...prev, expiry: formatExpiry(e.target.value) }))}
+                            className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#FF5533] bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">CVV</label>
+                          <input
+                            type="password"
+                            inputMode="numeric"
+                            placeholder="•••"
+                            maxLength={4}
+                            value={cardData.cvv}
+                            onChange={(e) => setCardData((prev) => ({ ...prev, cvv: e.target.value.replace(/\D/g, "").slice(0, 4) }))}
+                            className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#FF5533] bg-white"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 flex items-center gap-2 text-xs text-gray-400">
+                      <Lock className="w-3.5 h-3.5" />
+                      <span>Your card details are encrypted and secure</span>
+                      <ShieldCheck className="w-3.5 h-3.5 ml-auto" />
+                      <span>SSL Protected</span>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Order Summary */}
+            {/* Right column — order summary */}
             <div>
-              <Card title={t("checkout.orderSummary")}>
-                <div className="space-y-4 mb-6 max-h-64 overflow-y-auto">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24">
+                <h2 className="text-lg font-black text-[#0F1F3D] mb-4">{t("checkout.orderSummary")}</h2>
+
+                <div className="space-y-3 mb-5 max-h-52 overflow-y-auto">
                   {cart.items.map((item: any) => (
-                    <div key={item.id} className="flex justify-between text-sm">
-                      <span className="text-gray-600">{item.variant.product.title} x {item.quantity}</span>
-                      <span className="font-medium">
+                    <div key={item.id} className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                        {(item.variant.images?.[0]?.url || item.variant.product?.images?.[0]?.url) ? (
+                          <img
+                            src={item.variant.images?.[0]?.url || item.variant.product.images[0].url}
+                            alt={item.variant.product.title}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-lg">📦</div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-[#0F1F3D] truncate">{item.variant.product.title}</p>
+                        <p className="text-xs text-gray-400">x{item.quantity}</p>
+                      </div>
+                      <span className="text-sm font-bold text-[#0F1F3D] flex-shrink-0">
                         ₪{((item.variant.priceCents * item.quantity) / 100).toFixed(2)}
                       </span>
                     </div>
                   ))}
                 </div>
 
-                <div className="border-t border-gray-200 pt-4 space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">{t("checkout.subtotal")}</span>
+                <div className="border-t border-gray-100 pt-4 space-y-2 text-sm">
+                  <div className="flex justify-between text-gray-500">
+                    <span>{t("checkout.subtotal")}</span>
                     <span>₪{(subtotal / 100).toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">{t("checkout.tax")}</span>
+                  <div className="flex justify-between text-gray-500">
+                    <span>{t("checkout.tax")} (17%)</span>
                     <span>₪{(tax / 100).toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">{t("checkout.shipping")}</span>
-                    <span>₪{(shipping / 100).toFixed(2)}</span>
+                  <div className="flex justify-between text-gray-500">
+                    <span>{t("checkout.shipping")}</span>
+                    <span className="text-green-600 font-medium">Free</span>
                   </div>
-
-                  <div className="border-t border-gray-200 pt-2 flex justify-between font-semibold text-base">
-                    <span>{t("checkout.total")}</span>
-                    <span className="text-indigo-600">₪{(total / 100).toFixed(2)}</span>
+                  <div className="border-t border-gray-100 pt-3 flex justify-between font-black text-base">
+                    <span className="text-[#0F1F3D]">{t("checkout.total")}</span>
+                    <span style={{ color: "#FF5533" }}>₪{(total / 100).toFixed(2)}</span>
                   </div>
                 </div>
 
-                <Button
+                <button
                   onClick={handlePlaceOrder}
-                  isLoading={isSubmitting}
-                  disabled={!formData.fullName || !formData.addressLine1}
-                  className="w-full mt-6"
+                  disabled={!formData.fullName || !formData.addressLine1 || isSubmitting || !isCardValid()}
+                  className="w-full mt-6 py-3.5 rounded-xl font-black text-white text-sm tracking-wide transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ background: "#FF5533" }}
                 >
-                  {t("checkout.placeOrder")}
-                </Button>
-              </Card>
+                  {isSubmitting ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      </svg>
+                      Placing Order…
+                    </span>
+                  ) : formData.paymentMethod === "VISA" ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <Lock className="w-4 h-4" /> Pay ₪{(total / 100).toFixed(2)}
+                    </span>
+                  ) : (
+                    t("checkout.placeOrder")
+                  )}
+                </button>
+
+                {formData.paymentMethod === "VISA" && (
+                  <p className="text-center text-xs text-gray-400 mt-3 flex items-center justify-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5" /> Secured by SSL encryption
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>

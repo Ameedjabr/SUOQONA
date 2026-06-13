@@ -31,14 +31,16 @@ export default function InventoryPage() {
       .finally(() => setIsLoading(false));
   }, [accessToken]);
 
+  const getAvail = (v: any) => (v.inventoryItem?.onHand ?? 0) - (v.inventoryItem?.reserved ?? 0);
+
   const inStock = products.filter((p) =>
-    p.variants?.some((v: any) => v.inventoryItem?.quantity > 0)
+    p.variants?.some((v: any) => getAvail(v) > 0)
   );
   const lowStock = products.filter((p) =>
-    p.variants?.some((v: any) => v.inventoryItem?.quantity > 0 && v.inventoryItem?.quantity <= 5)
+    p.variants?.some((v: any) => getAvail(v) > 0 && getAvail(v) <= 5)
   );
   const outOfStock = products.filter((p) =>
-    p.variants?.every((v: any) => !v.inventoryItem || v.inventoryItem.quantity === 0)
+    p.variants?.every((v: any) => getAvail(v) <= 0)
   );
 
   const statCards = [
@@ -107,7 +109,7 @@ export default function InventoryPage() {
                 </div>
                 {products.map((product) => {
                   const totalQty = product.variants?.reduce(
-                    (sum: number, v: any) => sum + (v.inventoryItem?.quantity ?? 0), 0
+                    (sum: number, v: any) => sum + getAvail(v), 0
                   ) ?? 0;
                   const isLow = totalQty > 0 && totalQty <= 5;
                   const isOut = totalQty === 0;

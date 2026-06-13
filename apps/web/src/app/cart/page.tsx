@@ -122,8 +122,18 @@ export default function CartPage() {
                   {cartItems.map((item) => (
                     <Card key={item.id} className="flex gap-6">
                       {/* Image */}
-                      <div className="w-24 h-24 bg-gradient-to-br from-gray-200 to-gray-300 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <span className="text-3xl">📦</span>
+                      <div className="w-24 h-24 bg-gray-100 rounded-lg flex-shrink-0 overflow-hidden">
+                        {(item.variant.images?.[0]?.url || item.variant.product?.images?.[0]?.url) ? (
+                          <img
+                            src={item.variant.images?.[0]?.url || item.variant.product.images[0].url}
+                            alt={item.variant.product.title}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                            <span className="text-3xl">📦</span>
+                          </div>
+                        )}
                       </div>
 
                       {/* Details */}
@@ -131,7 +141,23 @@ export default function CartPage() {
                         <h3 className="font-semibold text-gray-900">
                           {item.variant.product.title}
                         </h3>
-                        <p className="text-sm text-gray-600 mt-1">
+                        <div className="flex flex-wrap items-center gap-2 mt-1">
+                          {item.metadata?.color && (
+                            <span className="flex items-center gap-1 text-sm text-gray-600">
+                              <span
+                                className="inline-block w-3.5 h-3.5 rounded-full border border-gray-300 flex-shrink-0"
+                                style={{ backgroundColor: (item.variant.optionValues as any)?.hex ?? "#ccc" }}
+                              />
+                              {item.metadata.color}
+                            </span>
+                          )}
+                          {item.metadata?.size && (
+                            <span className="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs font-medium rounded">
+                              Size: {item.metadata.size}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-500 mt-1">
                           {t("cartPage.sku")}: {item.variant.sku}
                         </p>
                         <p className="text-lg font-bold text-indigo-600 mt-2">

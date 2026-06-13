@@ -23,6 +23,8 @@ export default function ProductDetail() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [isBuyingNow, setIsBuyingNow] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
@@ -73,6 +75,9 @@ export default function ProductDetail() {
       const data = await productApi.getBySlug(slug);
       setProduct(data);
       setActiveImg(0);
+      setSelectedVariantId(data.variants?.[0]?.id ?? null);
+      const sizes = data.variants?.[0]?.optionValues?.sizes as string | undefined;
+      setSelectedSize(sizes ? sizes.split(",")[0] : null);
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load product");
@@ -99,12 +104,17 @@ export default function ProductDetail() {
   };
   const onMouseUp = () => { dragging.current = false; };
 
+  const selectedVariant = product?.variants?.find(v => v.id === selectedVariantId) ?? product?.variants?.[0];
+
   const handleAddToCart = async () => {
     if (!isAuthenticated) { router.push("/login"); return; }
-    if (!accessToken || !product?.variants?.[0]) return;
+    if (!accessToken || !selectedVariant) return;
     setIsAddingToCart(true);
     try {
-      await cartApi.addItem(accessToken, product.variants[0].id, quantity);
+      const meta: Record<string, string> = {};
+      if (selectedVariant.optionValues?.color) meta.color = selectedVariant.optionValues.color as string;
+      if (selectedSize) meta.size = selectedSize;
+      await cartApi.addItem(accessToken, selectedVariant.id, quantity, Object.keys(meta).length ? meta : undefined);
       setSuccess(t("productDetail.addedToCart"));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to add to cart");
@@ -115,10 +125,13 @@ export default function ProductDetail() {
 
   const handleBuyNow = async () => {
     if (!isAuthenticated) { router.push("/login"); return; }
-    if (!accessToken || !product?.variants?.[0]) return;
+    if (!accessToken || !selectedVariant) return;
     setIsBuyingNow(true);
     try {
-      await cartApi.addItem(accessToken, product.variants[0].id, quantity);
+      const meta: Record<string, string> = {};
+      if (selectedVariant.optionValues?.color) meta.color = selectedVariant.optionValues.color as string;
+      if (selectedSize) meta.size = selectedSize;
+      await cartApi.addItem(accessToken, selectedVariant.id, quantity, Object.keys(meta).length ? meta : undefined);
       router.push("/cart");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to process");
@@ -373,6 +386,60 @@ export default function ProductDetail() {
                 </div>
               )}
 
+              {/* Color selector */}
+              {product.variants && product.variants.length > 1 && product.variants[0]?.optionValues?.color && (
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-3">
+                    Color: <span className="font-normal text-gray-600">{selectedVariant?.optionValues?.color}</span>
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {product.variants.map((v) => {
+                      const hex = v.optionValues?.hex as string | undefined;
+                      const color = v.optionValues?.color as string | undefined;
+                      const isSelected = v.id === selectedVariantId;
+                      return (
+                        <button
+                          key={v.id}
+                          title={color}
+                          onClick={() => setSelectedVariantId(v.id)}
+                          className={`w-9 h-9 rounded-full border-2 transition-all ${
+                            isSelected ? "border-indigo-600 scale-110 shadow-md" : "border-gray-300 hover:border-gray-500"
+                          }`}
+                          style={{ backgroundColor: hex ?? "#ccc" }}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Size selector */}
+              {selectedSize && (() => {
+                const sizes = (selectedVariant?.optionValues?.sizes as string | undefined)?.split(",") ?? [];
+                return sizes.length > 0 ? (
+                  <div>
+                    <h3 className="font-semibold text-gray-900 mb-3">
+                      Size: <span className="font-normal text-gray-600">{selectedSize}</span>
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {sizes.map((size) => (
+                        <button
+                          key={size}
+                          onClick={() => setSelectedSize(size)}
+                          className={`min-w-[2.75rem] h-10 px-3 rounded-lg border-2 text-sm font-medium transition-all ${
+                            selectedSize === size
+                              ? "border-indigo-600 bg-indigo-50 text-indigo-700 scale-105"
+                              : "border-gray-300 text-gray-700 hover:border-gray-500"
+                          }`}
+                        >
+                          {size}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : null;
+              })()}
+
               <div>
                 <h3 className="font-semibold text-gray-900 mb-3">{t("productDetail.quantity")}</h3>
                 <div className="flex items-center gap-3">
@@ -423,7 +490,7 @@ export default function ProductDetail() {
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-500">{t("productDetail.sku")}</span>
-                    <span className="font-medium">{product.variants?.[0]?.sku || "N/A"}</span>
+                    <span className="font-medium">{selectedVariant?.sku || "N/A"}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">{t("productDetail.availability")}</span>

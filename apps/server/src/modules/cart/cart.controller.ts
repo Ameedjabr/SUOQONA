@@ -13,8 +13,8 @@ export async function getCart(req: Request, res: Response, next: NextFunction) {
 
 export async function addItem(req: Request, res: Response, next: NextFunction) {
   try {
-    const { variantId, quantity } = req.body;
-    const cart = await cartService.addItem(req.user!.userId, variantId, quantity);
+    const { variantId, quantity, metadata } = req.body;
+    const cart = await cartService.addItem(req.user!.userId, variantId, quantity, metadata);
     sendSuccess(res, cart);
   } catch (err) {
     next(err);

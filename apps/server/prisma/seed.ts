@@ -44,86 +44,86 @@ async function main() {
 
   const electronics = await prisma.category.upsert({
     where: { slug: "electronics" },
-    update: { image: "https://images.unsplash.com/photo-1526738549149-8e07eca6c147?w=3840&q=100" },
-    create: { name: "Electronics", slug: "electronics", image: "https://images.unsplash.com/photo-1526738549149-8e07eca6c147?w=3840&q=100" },
+    update: { image: "https://images.unsplash.com/photo-1526738549149-8e07eca6c147?w=800&q=80" },
+    create: { name: "Electronics", slug: "electronics", image: "https://images.unsplash.com/photo-1526738549149-8e07eca6c147?w=800&q=80" },
   });
 
   const phones = await prisma.category.upsert({
     where: { slug: "phones" },
-    update: { image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=3840&q=100" },
-    create: { name: "Phones", slug: "phones", parentId: electronics.id, image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=3840&q=100" },
+    update: { image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&q=80" },
+    create: { name: "Phones", slug: "phones", parentId: electronics.id, image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&q=80" },
   });
 
   const laptops = await prisma.category.upsert({
     where: { slug: "laptops" },
-    update: { image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=3840&q=100" },
-    create: { name: "Laptops", slug: "laptops", parentId: electronics.id, image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=3840&q=100" },
+    update: { image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&q=80" },
+    create: { name: "Laptops", slug: "laptops", parentId: electronics.id, image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&q=80" },
   });
 
   const accessories = await prisma.category.upsert({
     where: { slug: "accessories" },
-    update: { parentId: null, image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=3840&q=100" },
-    create: { name: "Accessories", slug: "accessories", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=3840&q=100" },
+    update: { parentId: null, image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80" },
+    create: { name: "Accessories", slug: "accessories", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80" },
   });
 
   const clothing = await prisma.category.upsert({
     where: { slug: "clothing" },
-    update: { image: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=3840&q=100" },
-    create: { name: "Clothing", slug: "clothing", image: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=3840&q=100" },
+    update: { image: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=800&q=80" },
+    create: { name: "Clothing", slug: "clothing", image: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=800&q=80" },
   });
 
   const mensClothing = await prisma.category.upsert({
     where: { slug: "mens-clothing" },
-    update: { image: "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=3840&q=100" },
-    create: { name: "Men's Clothing", slug: "mens-clothing", parentId: clothing.id, image: "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=3840&q=100" },
+    update: { image: "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=800&q=80" },
+    create: { name: "Men's Clothing", slug: "mens-clothing", parentId: clothing.id, image: "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=800&q=80" },
   });
 
   const womensClothing = await prisma.category.upsert({
     where: { slug: "womens-clothing" },
-    update: { image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=3840&q=100" },
-    create: { name: "Women's Clothing", slug: "womens-clothing", parentId: clothing.id, image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=3840&q=100" },
+    update: { image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&q=80" },
+    create: { name: "Women's Clothing", slug: "womens-clothing", parentId: clothing.id, image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&q=80" },
   });
 
   const home = await prisma.category.upsert({
     where: { slug: "home" },
-    update: { image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=3840&q=100" },
-    create: { name: "Home & Kitchen", slug: "home", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=3840&q=100" },
+    update: { image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80" },
+    create: { name: "Home & Kitchen", slug: "home", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80" },
   });
 
   const furniture = await prisma.category.upsert({
     where: { slug: "furniture" },
-    update: { image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=3840&q=100" },
-    create: { name: "Furniture", slug: "furniture", parentId: home.id, image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=3840&q=100" },
+    update: { image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80" },
+    create: { name: "Furniture", slug: "furniture", parentId: home.id, image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80" },
   });
 
   const kitchen = await prisma.category.upsert({
     where: { slug: "kitchen" },
-    update: { image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=3840&q=100" },
-    create: { name: "Kitchen", slug: "kitchen", parentId: home.id, image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=3840&q=100" },
+    update: { image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=80" },
+    create: { name: "Kitchen", slug: "kitchen", parentId: home.id, image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=80" },
   });
 
   const sports = await prisma.category.upsert({
     where: { slug: "sports" },
-    update: { image: "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=3840&q=100" },
-    create: { name: "Sports", slug: "sports", image: "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=3840&q=100" },
+    update: { image: "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=800&q=80" },
+    create: { name: "Sports", slug: "sports", image: "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=800&q=80" },
   });
 
-  await prisma.category.upsert({
+  const football = await prisma.category.upsert({
     where: { slug: "football" },
-    update: { image: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=3840&q=100" },
-    create: { name: "Football", slug: "football", parentId: sports.id, image: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=3840&q=100" },
+    update: { image: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=800&q=80" },
+    create: { name: "Football", slug: "football", parentId: sports.id, image: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=800&q=80" },
   });
 
-  await prisma.category.upsert({
+  const basketball = await prisma.category.upsert({
     where: { slug: "basketball" },
-    update: { image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=3840&q=100" },
-    create: { name: "Basketball", slug: "basketball", parentId: sports.id, image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=3840&q=100" },
+    update: { image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&q=80" },
+    create: { name: "Basketball", slug: "basketball", parentId: sports.id, image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&q=80" },
   });
 
-  await prisma.category.upsert({
+  const fitness = await prisma.category.upsert({
     where: { slug: "fitness" },
-    update: { image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=3840&q=100" },
-    create: { name: "Fitness", slug: "fitness", parentId: sports.id, image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=3840&q=100" },
+    update: { image: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=80" },
+    create: { name: "Fitness", slug: "fitness", parentId: sports.id, image: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=80" },
   });
 
   console.log("✓ Categories created");
@@ -131,50 +131,24 @@ async function main() {
   // ── Products ──────────────────────────────────────
   console.log("\n📦 Creating products...");
 
-  // Product 1: iPhone
+  // ── PHONES ──
   const iphone = await prisma.product.upsert({
     where: { slug: "iphone-15-pro" },
     update: {},
     create: {
       title: "iPhone 15 Pro",
       slug: "iphone-15-pro",
-      description: "The latest iPhone with A17 Pro chip, titanium design, and advanced camera system. Features include Dynamic Island, Always-On display, and USB-C connectivity.",
+      description: "The latest iPhone with A17 Pro chip, titanium design, and advanced camera system. Features Dynamic Island, Always-On display, and USB-C connectivity.",
       brand: "Apple",
       priceCents: 449900,
       currency: "ILS",
       status: "ACTIVE",
     },
   });
+  await prisma.productCategory.upsert({ where: { productId_categoryId: { productId: iphone.id, categoryId: phones.id } }, update: {}, create: { productId: iphone.id, categoryId: phones.id } });
+  const iphoneVariant128 = await prisma.productVariant.upsert({ where: { sku: "IPHONE15PRO-128-BLK" }, update: {}, create: { productId: iphone.id, sku: "IPHONE15PRO-128-BLK", priceCents: 449900, optionValues: { storage: "128GB", color: "Black Titanium" } } });
+  const iphoneVariant256 = await prisma.productVariant.upsert({ where: { sku: "IPHONE15PRO-256-BLU" }, update: {}, create: { productId: iphone.id, sku: "IPHONE15PRO-256-BLU", priceCents: 489900, optionValues: { storage: "256GB", color: "Blue Titanium" } } });
 
-  await prisma.productCategory.upsert({
-    where: { productId_categoryId: { productId: iphone.id, categoryId: phones.id } },
-    update: {},
-    create: { productId: iphone.id, categoryId: phones.id },
-  });
-
-  const iphoneVariant128 = await prisma.productVariant.upsert({
-    where: { sku: "IPHONE15PRO-128-BLK" },
-    update: {},
-    create: {
-      productId: iphone.id,
-      sku: "IPHONE15PRO-128-BLK",
-      priceCents: 449900,
-      optionValues: { storage: "128GB", color: "Black Titanium" },
-    },
-  });
-
-  const iphoneVariant256 = await prisma.productVariant.upsert({
-    where: { sku: "IPHONE15PRO-256-BLU" },
-    update: {},
-    create: {
-      productId: iphone.id,
-      sku: "IPHONE15PRO-256-BLU",
-      priceCents: 489900,
-      optionValues: { storage: "256GB", color: "Blue Titanium" },
-    },
-  });
-
-  // Product 2: Samsung Galaxy
   const samsung = await prisma.product.upsert({
     where: { slug: "samsung-galaxy-s24-ultra" },
     update: {},
@@ -188,25 +162,10 @@ async function main() {
       status: "ACTIVE",
     },
   });
+  await prisma.productCategory.upsert({ where: { productId_categoryId: { productId: samsung.id, categoryId: phones.id } }, update: {}, create: { productId: samsung.id, categoryId: phones.id } });
+  const samsungVariant = await prisma.productVariant.upsert({ where: { sku: "GALAXY-S24U-256-BLK" }, update: {}, create: { productId: samsung.id, sku: "GALAXY-S24U-256-BLK", priceCents: 469900, optionValues: { storage: "256GB", color: "Titanium Black" } } });
 
-  await prisma.productCategory.upsert({
-    where: { productId_categoryId: { productId: samsung.id, categoryId: phones.id } },
-    update: {},
-    create: { productId: samsung.id, categoryId: phones.id },
-  });
-
-  const samsungVariant = await prisma.productVariant.upsert({
-    where: { sku: "GALAXY-S24U-256-BLK" },
-    update: {},
-    create: {
-      productId: samsung.id,
-      sku: "GALAXY-S24U-256-BLK",
-      priceCents: 469900,
-      optionValues: { storage: "256GB", color: "Titanium Black" },
-    },
-  });
-
-  // Product 3: MacBook Pro
+  // ── LAPTOPS ──
   const macbook = await prisma.product.upsert({
     where: { slug: "macbook-pro-14" },
     update: {},
@@ -220,25 +179,10 @@ async function main() {
       status: "ACTIVE",
     },
   });
+  await prisma.productCategory.upsert({ where: { productId_categoryId: { productId: macbook.id, categoryId: laptops.id } }, update: {}, create: { productId: macbook.id, categoryId: laptops.id } });
+  const macbookVariant = await prisma.productVariant.upsert({ where: { sku: "MBP14-M3PRO-512-SLV" }, update: {}, create: { productId: macbook.id, sku: "MBP14-M3PRO-512-SLV", priceCents: 799900, optionValues: { storage: "512GB SSD", ram: "18GB", color: "Silver" } } });
 
-  await prisma.productCategory.upsert({
-    where: { productId_categoryId: { productId: macbook.id, categoryId: laptops.id } },
-    update: {},
-    create: { productId: macbook.id, categoryId: laptops.id },
-  });
-
-  const macbookVariant = await prisma.productVariant.upsert({
-    where: { sku: "MBP14-M3PRO-512-SLV" },
-    update: {},
-    create: {
-      productId: macbook.id,
-      sku: "MBP14-M3PRO-512-SLV",
-      priceCents: 799900,
-      optionValues: { storage: "512GB SSD", ram: "18GB", color: "Silver" },
-    },
-  });
-
-  // Product 4: Wireless Headphones
+  // ── ACCESSORIES ──
   const airpods = await prisma.product.upsert({
     where: { slug: "airpods-pro-2" },
     update: {},
@@ -252,25 +196,9 @@ async function main() {
       status: "ACTIVE",
     },
   });
+  await prisma.productCategory.upsert({ where: { productId_categoryId: { productId: airpods.id, categoryId: accessories.id } }, update: {}, create: { productId: airpods.id, categoryId: accessories.id } });
+  const airpodsVariant = await prisma.productVariant.upsert({ where: { sku: "AIRPODS-PRO2-USBC" }, update: {}, create: { productId: airpods.id, sku: "AIRPODS-PRO2-USBC", priceCents: 99900, optionValues: { charging: "USB-C" } } });
 
-  await prisma.productCategory.upsert({
-    where: { productId_categoryId: { productId: airpods.id, categoryId: accessories.id } },
-    update: {},
-    create: { productId: airpods.id, categoryId: accessories.id },
-  });
-
-  const airpodsVariant = await prisma.productVariant.upsert({
-    where: { sku: "AIRPODS-PRO2-USBC" },
-    update: {},
-    create: {
-      productId: airpods.id,
-      sku: "AIRPODS-PRO2-USBC",
-      priceCents: 99900,
-      optionValues: { charging: "USB-C" },
-    },
-  });
-
-  // Product 5: Sony Headphones
   const sonyHeadphones = await prisma.product.upsert({
     where: { slug: "sony-wh1000xm5" },
     update: {},
@@ -284,186 +212,10 @@ async function main() {
       status: "ACTIVE",
     },
   });
+  await prisma.productCategory.upsert({ where: { productId_categoryId: { productId: sonyHeadphones.id, categoryId: accessories.id } }, update: {}, create: { productId: sonyHeadphones.id, categoryId: accessories.id } });
+  const sonyVariantBlack = await prisma.productVariant.upsert({ where: { sku: "SONY-WH1000XM5-BLK" }, update: {}, create: { productId: sonyHeadphones.id, sku: "SONY-WH1000XM5-BLK", priceCents: 149900, optionValues: { color: "Black" } } });
+  const sonyVariantSilver = await prisma.productVariant.upsert({ where: { sku: "SONY-WH1000XM5-SLV" }, update: {}, create: { productId: sonyHeadphones.id, sku: "SONY-WH1000XM5-SLV", priceCents: 149900, optionValues: { color: "Silver" } } });
 
-  await prisma.productCategory.upsert({
-    where: { productId_categoryId: { productId: sonyHeadphones.id, categoryId: accessories.id } },
-    update: {},
-    create: { productId: sonyHeadphones.id, categoryId: accessories.id },
-  });
-
-  const sonyVariantBlack = await prisma.productVariant.upsert({
-    where: { sku: "SONY-WH1000XM5-BLK" },
-    update: {},
-    create: {
-      productId: sonyHeadphones.id,
-      sku: "SONY-WH1000XM5-BLK",
-      priceCents: 149900,
-      optionValues: { color: "Black" },
-    },
-  });
-
-  const sonyVariantSilver = await prisma.productVariant.upsert({
-    where: { sku: "SONY-WH1000XM5-SLV" },
-    update: {},
-    create: {
-      productId: sonyHeadphones.id,
-      sku: "SONY-WH1000XM5-SLV",
-      priceCents: 149900,
-      optionValues: { color: "Silver" },
-    },
-  });
-
-  // Product 6: Men's T-Shirt
-  const tshirt = await prisma.product.upsert({
-    where: { slug: "cotton-crew-tshirt" },
-    update: {},
-    create: {
-      title: "Premium Cotton Crew Neck T-Shirt",
-      slug: "cotton-crew-tshirt",
-      description: "Classic fit t-shirt made from 100% organic cotton. Soft, breathable, and perfect for everyday wear.",
-      brand: "Souqona Basics",
-      priceCents: 7900,
-      currency: "ILS",
-      status: "ACTIVE",
-    },
-  });
-
-  await prisma.productCategory.upsert({
-    where: { productId_categoryId: { productId: tshirt.id, categoryId: mensClothing.id } },
-    update: {},
-    create: { productId: tshirt.id, categoryId: mensClothing.id },
-  });
-
-  const tshirtVariants = await Promise.all([
-    prisma.productVariant.upsert({
-      where: { sku: "TSHIRT-M-BLK" },
-      update: {},
-      create: {
-        productId: tshirt.id,
-        sku: "TSHIRT-M-BLK",
-        priceCents: 7900,
-        optionValues: { size: "M", color: "Black" },
-      },
-    }),
-    prisma.productVariant.upsert({
-      where: { sku: "TSHIRT-L-BLK" },
-      update: {},
-      create: {
-        productId: tshirt.id,
-        sku: "TSHIRT-L-BLK",
-        priceCents: 7900,
-        optionValues: { size: "L", color: "Black" },
-      },
-    }),
-    prisma.productVariant.upsert({
-      where: { sku: "TSHIRT-M-WHT" },
-      update: {},
-      create: {
-        productId: tshirt.id,
-        sku: "TSHIRT-M-WHT",
-        priceCents: 7900,
-        optionValues: { size: "M", color: "White" },
-      },
-    }),
-  ]);
-
-  // Product 7: Women's Dress
-  const dress = await prisma.product.upsert({
-    where: { slug: "summer-floral-dress" },
-    update: {},
-    create: {
-      title: "Summer Floral Midi Dress",
-      slug: "summer-floral-dress",
-      description: "Elegant floral print midi dress, perfect for summer occasions. Features a flattering A-line silhouette with adjustable straps.",
-      brand: "Souqona Fashion",
-      priceCents: 19900,
-      currency: "ILS",
-      status: "ACTIVE",
-    },
-  });
-
-  await prisma.productCategory.upsert({
-    where: { productId_categoryId: { productId: dress.id, categoryId: womensClothing.id } },
-    update: {},
-    create: { productId: dress.id, categoryId: womensClothing.id },
-  });
-
-  const dressVariant = await prisma.productVariant.upsert({
-    where: { sku: "DRESS-FLORAL-M" },
-    update: {},
-    create: {
-      productId: dress.id,
-      sku: "DRESS-FLORAL-M",
-      priceCents: 19900,
-      optionValues: { size: "M", pattern: "Blue Floral" },
-    },
-  });
-
-  // Product 8: Office Chair
-  const chair = await prisma.product.upsert({
-    where: { slug: "ergonomic-office-chair" },
-    update: {},
-    create: {
-      title: "Ergonomic Office Chair",
-      slug: "ergonomic-office-chair",
-      description: "Premium ergonomic office chair with lumbar support, adjustable armrests, and breathable mesh back. Perfect for long work hours.",
-      brand: "ComfortPro",
-      priceCents: 129900,
-      currency: "ILS",
-      status: "ACTIVE",
-    },
-  });
-
-  await prisma.productCategory.upsert({
-    where: { productId_categoryId: { productId: chair.id, categoryId: furniture.id } },
-    update: {},
-    create: { productId: chair.id, categoryId: furniture.id },
-  });
-
-  const chairVariant = await prisma.productVariant.upsert({
-    where: { sku: "CHAIR-ERGO-BLK" },
-    update: {},
-    create: {
-      productId: chair.id,
-      sku: "CHAIR-ERGO-BLK",
-      priceCents: 129900,
-      optionValues: { color: "Black", material: "Mesh" },
-    },
-  });
-
-  // Product 9: Coffee Maker
-  const coffeeMaker = await prisma.product.upsert({
-    where: { slug: "automatic-espresso-machine" },
-    update: {},
-    create: {
-      title: "Automatic Espresso Machine",
-      slug: "automatic-espresso-machine",
-      description: "Professional-grade automatic espresso machine with built-in grinder, milk frother, and customizable brewing settings. Makes barista-quality coffee at home.",
-      brand: "BrewMaster",
-      priceCents: 249900,
-      currency: "ILS",
-      status: "ACTIVE",
-    },
-  });
-
-  await prisma.productCategory.upsert({
-    where: { productId_categoryId: { productId: coffeeMaker.id, categoryId: kitchen.id } },
-    update: {},
-    create: { productId: coffeeMaker.id, categoryId: kitchen.id },
-  });
-
-  const coffeeMakerVariant = await prisma.productVariant.upsert({
-    where: { sku: "ESPRESSO-AUTO-SLV" },
-    update: {},
-    create: {
-      productId: coffeeMaker.id,
-      sku: "ESPRESSO-AUTO-SLV",
-      priceCents: 249900,
-      optionValues: { color: "Silver", capacity: "1.8L" },
-    },
-  });
-
-  // Product 10: Wireless Charger
   const charger = await prisma.product.upsert({
     where: { slug: "wireless-charging-pad" },
     update: {},
@@ -477,23 +229,90 @@ async function main() {
       status: "ACTIVE",
     },
   });
+  await prisma.productCategory.upsert({ where: { productId_categoryId: { productId: charger.id, categoryId: accessories.id } }, update: {}, create: { productId: charger.id, categoryId: accessories.id } });
+  const chargerVariant = await prisma.productVariant.upsert({ where: { sku: "CHARGER-WIRELESS-BLK" }, update: {}, create: { productId: charger.id, sku: "CHARGER-WIRELESS-BLK", priceCents: 4900, optionValues: { color: "Black" } } });
 
-  await prisma.productCategory.upsert({
-    where: { productId_categoryId: { productId: charger.id, categoryId: accessories.id } },
-    update: {},
-    create: { productId: charger.id, categoryId: accessories.id },
-  });
-
-  const chargerVariant = await prisma.productVariant.upsert({
-    where: { sku: "CHARGER-WIRELESS-BLK" },
+  // ── MEN'S CLOTHING ──
+  const tshirt = await prisma.product.upsert({
+    where: { slug: "cotton-crew-tshirt" },
     update: {},
     create: {
-      productId: charger.id,
-      sku: "CHARGER-WIRELESS-BLK",
-      priceCents: 4900,
-      optionValues: { color: "Black" },
+      title: "Premium Cotton Crew Neck T-Shirt",
+      slug: "cotton-crew-tshirt",
+      description: "Classic fit t-shirt made from 100% organic cotton. Soft, breathable, and perfect for everyday wear.",
+      brand: "Souqona Basics",
+      priceCents: 7900,
+      currency: "ILS",
+      status: "ACTIVE",
     },
   });
+  await prisma.productCategory.upsert({ where: { productId_categoryId: { productId: tshirt.id, categoryId: mensClothing.id } }, update: {}, create: { productId: tshirt.id, categoryId: mensClothing.id } });
+  const tshirtBlack = await prisma.productVariant.upsert({ where: { sku: "TSHIRT-M-BLK"  }, update: {}, create: { productId: tshirt.id, sku: "TSHIRT-M-BLK",  priceCents: 7900, optionValues: { color: "Black", hex: "#1f2937", sizes: "XS,S,M,L,XL,XXL" } } });
+  const tshirtWhite = await prisma.productVariant.upsert({ where: { sku: "TSHIRT-M-WHT"  }, update: {}, create: { productId: tshirt.id, sku: "TSHIRT-M-WHT",  priceCents: 7900, optionValues: { color: "White", hex: "#f3f4f6", sizes: "XS,S,M,L,XL,XXL" } } });
+  const tshirtNavy  = await prisma.productVariant.upsert({ where: { sku: "TSHIRT-NAVY"   }, update: {}, create: { productId: tshirt.id, sku: "TSHIRT-NAVY",   priceCents: 7900, optionValues: { color: "Navy",  hex: "#1e3a5f", sizes: "XS,S,M,L,XL,XXL" } } });
+  const tshirtGray  = await prisma.productVariant.upsert({ where: { sku: "TSHIRT-GRAY"   }, update: {}, create: { productId: tshirt.id, sku: "TSHIRT-GRAY",   priceCents: 7900, optionValues: { color: "Gray",  hex: "#6b7280", sizes: "XS,S,M,L,XL,XXL" } } });
+  const tshirtRed   = await prisma.productVariant.upsert({ where: { sku: "TSHIRT-RED"    }, update: {}, create: { productId: tshirt.id, sku: "TSHIRT-RED",    priceCents: 7900, optionValues: { color: "Red",   hex: "#dc2626", sizes: "XS,S,M,L,XL,XXL" } } });
+  const tshirtOlive = await prisma.productVariant.upsert({ where: { sku: "TSHIRT-OLIV"   }, update: {}, create: { productId: tshirt.id, sku: "TSHIRT-OLIV",   priceCents: 7900, optionValues: { color: "Olive", hex: "#65a30d", sizes: "XS,S,M,L,XL,XXL" } } });
+
+  // ── WOMEN'S CLOTHING ──
+  const dress = await prisma.product.upsert({
+    where: { slug: "summer-floral-dress" },
+    update: {},
+    create: {
+      title: "Summer Floral Midi Dress",
+      slug: "summer-floral-dress",
+      description: "Elegant floral print midi dress, perfect for summer occasions. Features a flattering A-line silhouette with adjustable straps.",
+      brand: "Souqona Fashion",
+      priceCents: 19900,
+      currency: "ILS",
+      status: "ACTIVE",
+    },
+  });
+  await prisma.productCategory.upsert({ where: { productId_categoryId: { productId: dress.id, categoryId: womensClothing.id } }, update: {}, create: { productId: dress.id, categoryId: womensClothing.id } });
+  const dressBlue  = await prisma.productVariant.upsert({ where: { sku: "DRESS-FLORAL-M" }, update: {}, create: { productId: dress.id, sku: "DRESS-FLORAL-M", priceCents: 19900, optionValues: { color: "Blue Floral", hex: "#3b82f6", sizes: "XS,S,M,L,XL" } } });
+  const dressPink  = await prisma.productVariant.upsert({ where: { sku: "DRESS-PINK"     }, update: {}, create: { productId: dress.id, sku: "DRESS-PINK",     priceCents: 19900, optionValues: { color: "Pink",       hex: "#ec4899", sizes: "XS,S,M,L,XL" } } });
+  const dressYellow= await prisma.productVariant.upsert({ where: { sku: "DRESS-YLW"      }, update: {}, create: { productId: dress.id, sku: "DRESS-YLW",      priceCents: 19900, optionValues: { color: "Yellow",     hex: "#eab308", sizes: "XS,S,M,L,XL" } } });
+  const dressRed   = await prisma.productVariant.upsert({ where: { sku: "DRESS-RED"      }, update: {}, create: { productId: dress.id, sku: "DRESS-RED",      priceCents: 19900, optionValues: { color: "Red",        hex: "#dc2626", sizes: "XS,S,M,L,XL" } } });
+  const dressMauve = await prisma.productVariant.upsert({ where: { sku: "DRESS-MAUVE"    }, update: {}, create: { productId: dress.id, sku: "DRESS-MAUVE",    priceCents: 19900, optionValues: { color: "Mauve",      hex: "#8b5cf6", sizes: "XS,S,M,L,XL" } } });
+
+  // ── FURNITURE ──
+  const chair = await prisma.product.upsert({
+    where: { slug: "ergonomic-office-chair" },
+    update: {},
+    create: {
+      title: "Ergonomic Office Chair",
+      slug: "ergonomic-office-chair",
+      description: "Premium ergonomic office chair with lumbar support, adjustable armrests, and breathable mesh back. Perfect for long work hours.",
+      brand: "ComfortPro",
+      priceCents: 129900,
+      currency: "ILS",
+      status: "ACTIVE",
+    },
+  });
+  await prisma.productCategory.upsert({ where: { productId_categoryId: { productId: chair.id, categoryId: furniture.id } }, update: {}, create: { productId: chair.id, categoryId: furniture.id } });
+  const chairVariantBlack   = await prisma.productVariant.upsert({ where: { sku: "CHAIR-ERGO-BLK"  }, update: {}, create: { productId: chair.id, sku: "CHAIR-ERGO-BLK",  priceCents: 129900, optionValues: { color: "Black",    hex: "#1f2937", material: "Mesh" } } });
+  const chairVariantTeal    = await prisma.productVariant.upsert({ where: { sku: "CHAIR-ERGO-TEAL" }, update: {}, create: { productId: chair.id, sku: "CHAIR-ERGO-TEAL", priceCents: 129900, optionValues: { color: "Teal",     hex: "#0d9488", material: "Mesh" } } });
+  const chairVariantCharc   = await prisma.productVariant.upsert({ where: { sku: "CHAIR-ERGO-CHAR" }, update: {}, create: { productId: chair.id, sku: "CHAIR-ERGO-CHAR", priceCents: 129900, optionValues: { color: "Charcoal", hex: "#4b5563", material: "Mesh" } } });
+  const chairVariantSilver  = await prisma.productVariant.upsert({ where: { sku: "CHAIR-ERGO-SILV" }, update: {}, create: { productId: chair.id, sku: "CHAIR-ERGO-SILV", priceCents: 129900, optionValues: { color: "Silver",   hex: "#9ca3af", material: "Mesh" } } });
+  const chairVariantSand    = await prisma.productVariant.upsert({ where: { sku: "CHAIR-ERGO-SAND" }, update: {}, create: { productId: chair.id, sku: "CHAIR-ERGO-SAND", priceCents: 129900, optionValues: { color: "Sand",     hex: "#d4a96a", material: "Mesh" } } });
+  const chairVariantNavy    = await prisma.productVariant.upsert({ where: { sku: "CHAIR-ERGO-NAVY" }, update: {}, create: { productId: chair.id, sku: "CHAIR-ERGO-NAVY", priceCents: 129900, optionValues: { color: "Navy",     hex: "#1e40af", material: "Mesh" } } });
+
+  // ── KITCHEN ──
+  const coffeeMaker = await prisma.product.upsert({
+    where: { slug: "automatic-espresso-machine" },
+    update: {},
+    create: {
+      title: "Automatic Espresso Machine",
+      slug: "automatic-espresso-machine",
+      description: "Professional-grade automatic espresso machine with built-in grinder, milk frother, and customizable brewing settings.",
+      brand: "BrewMaster",
+      priceCents: 249900,
+      currency: "ILS",
+      status: "ACTIVE",
+    },
+  });
+  await prisma.productCategory.upsert({ where: { productId_categoryId: { productId: coffeeMaker.id, categoryId: kitchen.id } }, update: {}, create: { productId: coffeeMaker.id, categoryId: kitchen.id } });
+  const coffeeMakerVariant = await prisma.productVariant.upsert({ where: { sku: "ESPRESSO-AUTO-SLV" }, update: {}, create: { productId: coffeeMaker.id, sku: "ESPRESSO-AUTO-SLV", priceCents: 249900, optionValues: { color: "Silver", capacity: "1.8L" } } });
 
   console.log("✓ Products created");
 
@@ -501,30 +320,46 @@ async function main() {
   console.log("\n📊 Setting up inventory...");
 
   const allVariants = [
+    // Phones
     { variant: iphoneVariant128, onHand: 25 },
     { variant: iphoneVariant256, onHand: 15 },
     { variant: samsungVariant, onHand: 20 },
+    // Laptops
     { variant: macbookVariant, onHand: 10 },
+    // Accessories
     { variant: airpodsVariant, onHand: 50 },
     { variant: sonyVariantBlack, onHand: 30 },
     { variant: sonyVariantSilver, onHand: 25 },
-    ...tshirtVariants.map((v) => ({ variant: v, onHand: 100 })),
-    { variant: dressVariant, onHand: 40 },
-    { variant: chairVariant, onHand: 15 },
-    { variant: coffeeMakerVariant, onHand: 8 },
     { variant: chargerVariant, onHand: 200 },
+    // Men's Clothing
+    { variant: tshirtBlack, onHand: 100 },
+    { variant: tshirtWhite, onHand: 100 },
+    { variant: tshirtNavy,  onHand: 100 },
+    { variant: tshirtGray,  onHand: 100 },
+    { variant: tshirtRed,   onHand: 100 },
+    { variant: tshirtOlive, onHand: 100 },
+    // Women's Clothing
+    { variant: dressBlue,   onHand: 40 },
+    { variant: dressPink,   onHand: 40 },
+    { variant: dressYellow, onHand: 40 },
+    { variant: dressRed,    onHand: 40 },
+    { variant: dressMauve,  onHand: 40 },
+    // Furniture
+    { variant: chairVariantBlack,  onHand: 15 },
+    { variant: chairVariantTeal,   onHand: 15 },
+    { variant: chairVariantCharc,  onHand: 15 },
+    { variant: chairVariantSilver, onHand: 15 },
+    { variant: chairVariantSand,   onHand: 15 },
+    { variant: chairVariantNavy,   onHand: 15 },
+    // Kitchen
+    { variant: coffeeMakerVariant, onHand: 8 },
   ];
 
   for (const { variant, onHand } of allVariants) {
     await prisma.inventoryItem.upsert({
       where: { variantId: variant.id },
       update: { onHand },
-      create: {
-        variantId: variant.id,
-        onHand,
-        reserved: 0,
-        safetyStock: 5,
-      },
+      create: { variantId: variant.id, onHand, reserved: 0, safetyStock: 5 },
     });
   }
 
@@ -535,44 +370,44 @@ async function main() {
 
   const PRODUCT_IMAGES: Record<string, { url: string; alt: string }[]> = {
     "iphone-15-pro": [
-      { url: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=3840&q=100", alt: "iPhone 15 Pro titanium finish" },
-      { url: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=3840&q=100", alt: "iPhone 15 Pro side view" },
+      { url: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&q=80", alt: "iPhone 15 Pro titanium finish" },
+      { url: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&q=80", alt: "iPhone 15 Pro side view" },
     ],
     "samsung-galaxy-s24-ultra": [
-      { url: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=3840&q=100", alt: "Samsung Galaxy S24 Ultra" },
-      { url: "https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?w=3840&q=100", alt: "Samsung smartphone display" },
+      { url: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=800&q=80", alt: "Samsung Galaxy S24 Ultra" },
+      { url: "https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?w=800&q=80", alt: "Samsung smartphone display" },
     ],
     "macbook-pro-14": [
-      { url: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=3840&q=100", alt: "MacBook Pro on desk" },
-      { url: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=3840&q=100", alt: "MacBook Pro keyboard" },
+      { url: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&q=80", alt: "MacBook Pro on desk" },
+      { url: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=800&q=80", alt: "MacBook Pro keyboard" },
     ],
     "airpods-pro-2": [
-      { url: "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=3840&q=100", alt: "AirPods Pro with case" },
-      { url: "https://images.unsplash.com/photo-1588423771073-b8903fead85b?w=3840&q=100", alt: "AirPods Pro earbuds" },
+      { url: "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=800&q=80", alt: "AirPods Pro with case" },
+      { url: "https://images.unsplash.com/photo-1588423771073-b8903fead85b?w=800&q=80", alt: "AirPods Pro earbuds" },
     ],
     "sony-wh1000xm5": [
-      { url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=3840&q=100", alt: "Sony WH-1000XM5 headphones" },
-      { url: "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=3840&q=100", alt: "Over-ear headphones" },
-    ],
-    "cotton-crew-tshirt": [
-      { url: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=3840&q=100", alt: "White cotton t-shirt" },
-      { url: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=3840&q=100", alt: "Premium crew neck t-shirt" },
-    ],
-    "summer-floral-dress": [
-      { url: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=3840&q=100", alt: "Summer floral midi dress" },
-      { url: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=3840&q=100", alt: "Floral print dress detail" },
-    ],
-    "ergonomic-office-chair": [
-      { url: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=3840&q=100", alt: "Ergonomic office chair" },
-      { url: "https://images.unsplash.com/photo-1541123437800-1bb1317badc2?w=3840&q=100", alt: "Mesh back office chair" },
-    ],
-    "automatic-espresso-machine": [
-      { url: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=3840&q=100", alt: "Automatic espresso machine" },
-      { url: "https://images.unsplash.com/photo-1510017803434-a899398421b3?w=3840&q=100", alt: "Coffee machine brewing" },
+      { url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80", alt: "Sony WH-1000XM5 headphones" },
+      { url: "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=800&q=80", alt: "Over-ear headphones" },
     ],
     "wireless-charging-pad": [
-      { url: "https://images.unsplash.com/photo-1583394293214-5bc3d357b5b6?w=3840&q=100", alt: "Wireless charging pad" },
-      { url: "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=3840&q=100", alt: "Phone on wireless charger" },
+      { url: "https://images.unsplash.com/photo-1583394293214-5bc3d357b5b6?w=800&q=80", alt: "Wireless charging pad" },
+      { url: "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=800&q=80", alt: "Phone on wireless charger" },
+    ],
+    "cotton-crew-tshirt": [
+      { url: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80", alt: "White cotton t-shirt" },
+      { url: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&q=80", alt: "Premium crew neck t-shirt" },
+    ],
+    "summer-floral-dress": [
+      { url: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=800&q=80", alt: "Summer floral midi dress" },
+      { url: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=800&q=80", alt: "Floral print dress detail" },
+    ],
+    "ergonomic-office-chair": [
+      { url: "https://www.branchfurniture.ca/cdn/shop/files/ergonomic-chair.webp?v=1740171313&width=360", alt: "Ergonomic office chair" },
+      { url: "https://www.branchfurniture.ca/cdn/shop/files/bbfront.jpg?v=1745014236&width=360", alt: "Ergonomic chair front view" },
+    ],
+    "automatic-espresso-machine": [
+      { url: "https://www.foodandwine.com/thmb/XcirqkYw-DJz5mDJARtSTPF8Vp0=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/faw-automatic-espresso-machines-primary-rkilgore-1017-1-19451ea2176242eda1a3f88dc68c21c5.jpeg", alt: "Automatic espresso machines" },
+      { url: "https://www.seriouseats.com/thmb/LYhuyqTU9AFKnwnPfGqkKrBGFwI=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/sea-espresso-machines-test-rancilio-silvia-nsimpson-231-7cacf2f147e74e0fbaec55366684b330.jpeg", alt: "Espresso machine close-up" },
     ],
   };
 
@@ -595,8 +430,8 @@ async function main() {
   console.log("\n✅ Seed complete!");
   console.log("\n📋 Summary:");
   console.log("   - 2 Users (admin + customer)");
-  console.log("   - 10 Categories (3 main + 7 subcategories)");
-  console.log("   - 10 Products with variants");
+  console.log("   - 14 Categories (5 main + 9 subcategories)");
+  console.log("   - 10 Products across all categories");
   console.log("   - Inventory for all variants");
 }
 

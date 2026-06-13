@@ -5,15 +5,24 @@ const cartInclude = {
   items: {
     include: {
       variant: {
-        include: {
-          product: { select: { id: true, title: true, slug: true } },
+        select: {
+          id: true,
+          sku: true,
+          priceCents: true,
+          optionValues: true,
+          product: {
+            select: {
+              id: true, title: true, slug: true,
+              images: { orderBy: { sortOrder: "asc" as const }, take: 1 },
+            },
+          },
           images: { orderBy: { sortOrder: "asc" as const }, take: 1 },
           inventoryItem: true,
         },
       },
     },
   },
-};
+} as const;
 
 export async function getOrCreateCart(userId: string) {
   let cart = await prisma.cart.findFirst({
@@ -31,7 +40,7 @@ export async function getOrCreateCart(userId: string) {
   return cart;
 }
 
-export async function addItem(userId: string, variantId: string, quantity: number) {
+export async function addItem(userId: string, variantId: string, quantity: number, metadata?: Record<string, unknown>) {
   if (quantity < 1) throw new AppError("Quantity must be at least 1");
 
   const variant = await prisma.productVariant.findUnique({
@@ -54,7 +63,7 @@ export async function addItem(userId: string, variantId: string, quantity: numbe
 
     await prisma.cartItem.update({
       where: { id: existingItem.id },
-      data: { quantity: newQty },
+      data: { quantity: newQty, ...(metadata ? { metadata } : {}) },
     });
   } else {
     // Check stock
@@ -63,7 +72,7 @@ export async function addItem(userId: string, variantId: string, quantity: numbe
     }
 
     await prisma.cartItem.create({
-      data: { cartId: cart.id, variantId, quantity },
+      data: { cartId: cart.id, variantId, quantity, ...(metadata ? { metadata } : {}) },
     });
   }
 

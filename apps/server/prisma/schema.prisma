@@ -34,6 +34,7 @@ enum OrderStatus {
 
 enum PaymentMethod {
   COD
+  VISA
 }
 
 enum PaymentStatus {
@@ -225,6 +226,7 @@ model CartItem {
   cartId    String   @db.Uuid
   variantId String   @db.Uuid
   quantity  Int
+  metadata  Json?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

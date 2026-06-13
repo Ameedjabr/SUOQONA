@@ -326,7 +326,7 @@ export const cartApi = {
     return handleResponse<Cart>(response);
   },
 
-  addItem: async (token: string, variantId: string, quantity: number) => {
+  addItem: async (token: string, variantId: string, quantity: number, metadata?: Record<string, string>) => {
     const response = await fetch(`${API_URL}/api/cart/items`, {
       method: "POST",
       headers: {
@@ -334,7 +334,7 @@ export const cartApi = {
         Authorization: `Bearer ${token}`,
       },
       credentials: "include",
-      body: JSON.stringify({ variantId, quantity }),
+      body: JSON.stringify({ variantId, quantity, metadata }),
     });
     return handleResponse<Cart>(response);
   },

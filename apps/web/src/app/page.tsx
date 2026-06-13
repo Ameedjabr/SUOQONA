@@ -26,6 +26,22 @@ function formatPrice(cents: number) {
   return `₪${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 0 })}`;
 }
 
+function heroQuality(url: string): string {
+  if (!url) return url;
+  // Unsplash: bump to 1920w, q=95
+  if (url.includes("images.unsplash.com")) {
+    return url
+      .replace(/([?&])w=\d+/, "$11920")
+      .replace(/([?&])q=\d+/, "$195");
+  }
+  // Branch Furniture or other CDNs with width param
+  if (url.includes("width=")) {
+    return url.replace(/width=\d+/, "width=1200");
+  }
+  // All other URLs (foodandwine.com, seriouseats.com, etc.) — return as-is
+  return url;
+}
+
 export default function Home() {
   const { t } = useTranslation();
   const [categories, setCategories]   = useState<Category[]>([]);
@@ -81,7 +97,7 @@ export default function Home() {
               transition={{ duration: 0.9 }}
               className="absolute inset-0"
             >
-              <img src={cur.images![0].url} alt={cur.title} className="w-full h-full object-cover" />
+              <img src={heroQuality(cur.images![0].url)} alt={cur.title} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/20 to-transparent" />
             </motion.div>
           ) : (
@@ -243,7 +259,7 @@ export default function Home() {
                 <Link href={`/products/${product.slug}`}>
                   <div className="relative overflow-hidden rounded group cursor-pointer" style={{ height: 360 }}>
                     {product.images?.[0]?.url ? (
-                      <img src={product.images[0].url} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={heroQuality(product.images[0].url)} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     ) : (
                       <div className="w-full h-full bg-[#F5F5F0] flex items-center justify-center text-6xl">🛍️</div>
                     )}
@@ -342,7 +358,7 @@ export default function Home() {
               <Link href={`/products/${slides[2].slug}`}>
                 <div className="relative overflow-hidden rounded group cursor-pointer" style={{ height: 420 }}>
                   {slides[2].images?.[0]?.url && (
-                    <img src={slides[2].images[0].url} alt={slides[2].title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-600" />
+                    <img src={heroQuality(slides[2].images[0].url)} alt={slides[2].title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-600" />
                   )}
                   <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/30 to-transparent" />
                   <div className="absolute inset-0 flex flex-col justify-center px-12 md:px-20">
@@ -373,7 +389,7 @@ export default function Home() {
                 <Link href={`/products/${product.slug}`}>
                   <div className="relative overflow-hidden rounded group cursor-pointer bg-[#F5F5F0]" style={{ height: 260 }}>
                     {product.images?.[0]?.url && (
-                      <img src={product.images[0].url} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={heroQuality(product.images[0].url)} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-5">
